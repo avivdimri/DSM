@@ -1,0 +1,26 @@
+{
+  "name": "dsm",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon Server/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/avivdimri/DSM.git"
+  },
+  "author": "Aviv Dimri & Shiraz Ayash",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/avivdimri/DSM/issues"
+  },
+  "homepage": "https://github.com/avivdimri/DSM#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.15"
+  },
+  "dependencies": {
+    "express": "^4.17.2"
+  }
+}
