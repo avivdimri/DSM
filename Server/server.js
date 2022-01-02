@@ -6,37 +6,30 @@ bodyParser = require('body-parser');
 
 // mongodb instance connection url connection
 //connection to DB in the server by Atlas
-// const {MongoClient} = require('mongodb');
-// var uri = "mongodb+srv://Node_user:Node_user@cluster0.u6dbb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
-// const client = new MongoClient(uri);
-// async function listDatabases(client){
-//   databasesList = await client.db().admin().listDatabases();
+const {MongoClient} = require('mongodb');
+var uri = "mongodb+srv://ASDelivery:AaSs12345678@cluster0.u6dbb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+const client = new MongoClient(uri);
+async function listDatabases(client){
+  databasesList = await client.db().admin().listDatabases();
 
-//   console.log("Databases:");
-//   databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-// };
-// connectDB(client).catch(console.error)
+  console.log("Databases:");
+  databasesList.databases.forEach(db => console.log(` - ${db.name}`));
+};
+connectDB(client).catch(console.error)
 
-// async function connectDB(client) {
+async function connectDB(client) {
  
-//   try {
-//     await client.connect();
-//     await listDatabases(client);
+  try {
+    await client.connect();
+    await listDatabases(client);
   
-//   } catch (e) {
-//     console.error(e);
-//   }
-//   finally {
-//     await client.close();
-//   }
-// }
-// async function listDatabases(client){
-//   databasesList = await client.db().admin().listDatabases();
-
-//   console.log("Databases:");
-//   databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-// };
-
+  } catch (e) {
+    console.error(e);
+  }
+  finally {
+    await client.close();
+  }
+}
 
  //connection DB locally
 
@@ -55,8 +48,8 @@ bodyParser = require('body-parser');
 //   });
 // });
 
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
 
 
 var controller = require('./Controller/controller'); //importing route
