@@ -1,11 +1,24 @@
 'use strict';
 module.exports = function(app) {
-     var model = require('../Model/model');
+    var model = require('../Model/model');
+    
+    // app.use(bodyParser.urlencoded({ extended: true }));
+    // app.use(bodyParser.json());
+    // app.configure(function(){
+    //     app.use(express.bodyParser());
+    //   });
 
-    app.route('/admin/create_company')
-        // .post(model.create_company)
+    app.route('/sign_up_company')
+        .post(model.sign_up_company)
         .get(model.log)
+    app.route('/sign_up_courier')
+        .post(model.sign_up_courier)
+        .get(model.log)
+    app.route('/companyID/deliveries')
+        .post(model.add_delivery)
 
+    //     .get(model.list_all_couriers)
+    //     .post(model.create_courier)
     // app.route('companyID/couriers')
     //     .get(model.list_all_couriers)
     //     .post(model.create_courier)

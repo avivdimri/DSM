@@ -1,9 +1,40 @@
  'use strict';
 
- exports.log = function(req, res) {
+const { json } = require("express/lib/response");
+
+// 
+
+exports.log = function(req, res) {
     console.log("created company!!!!");
     res.send("created the company successfully")
     };
+
+exports.sign_up_company = function(req, res) {
+    console.log("created new user with email:" + req.query.email + " ,password:" + req.query.password);
+    //need to add to db
+    res.send("created new company successfully ")
+    };
+exports.sign_up_courier = function(req, res) {
+    console.log(req.body)
+     //need to add to db
+    res.send("created new courier successfully ")
+    };
+    
+exports.add_delivery = function(req, res) {
+    console.log("created delivery to company id =" + req.body.id);
+    console.log(req.body)
+    if (req.body.timing == "now"){
+        findBestCourier(req.body.id)
+        res.send("send to best courier")
+    }
+    else
+        res.send("created new delivery successfully ")
+    };
+
+    
+   function findBestCourier(id_company){
+       console.log("TBD")
+   }
 
 
 // // var mongoose = require('mongoose'),
