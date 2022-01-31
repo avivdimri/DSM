@@ -1,157 +1,56 @@
- 'use strict';
-
-const { json } = require("express/lib/response");
-
-// 
-
-exports.log = function(req, res) {
-    console.log("created company!!!!");
-    res.send("created the company successfully")
-    };
+//'use strict';
+const geo = require('./geoUtils'); 
+const db = require('./dbUtils')
+const con = require('./conUtils.js')
 
 exports.sign_up_company = function(req, res) {
-    console.log("created new user with email:" + req.query.email + " ,password:" + req.query.password);
-    //need to add to db
-    res.send("created new company successfully ")
+    db.saveCompany(req.body)
+    res.send("created new company successfully your id is")
     };
 exports.sign_up_courier = function(req, res) {
-    console.log(req.body)
-     //need to add to db
+    db.saveCourier(req.body)
     res.send("created new courier successfully ")
     };
     
 exports.add_delivery = function(req, res) {
-    console.log("created delivery to company id =" + req.body.id);
-    console.log(req.body)
+    db.saveDelivery(req.body)
     if (req.body.timing == "now"){
-        findBestCourier(req.body.id)
-        res.send("send to best courier")
+        //dispatch_delivery(req.body)
+        res.send("dispatch the delivery successfully ")
+    } else  {
+        add_delivery_to_feed(req.body)
+        res.send("add the delivery to feed successfully ")
     }
-    else
-        res.send("created new delivery successfully ")
-    };
-
+};
     
-   function findBestCourier(id_company){
-       console.log("TBD")
-   }
+function add_delivery_to_feed(delivery){
+    //TBD
+}
 
-
-// // var mongoose = require('mongoose'),
-//  // Task = mongoose.model('Deliveries');
-// Company
-
-// exports.create_company = function(req, res) {
-//     var new_company = new Company(req.body);
-//     new_company.save(function(err, company) {
-//         console.log("created comapny!!!!" + req.body);
-//         if (err)
-//             res.send(err);
-//         res.json(company);
-//     });
-// };
+function dispatch_delivery(delivery) {
+    find_courier = false
+    while (!find_courier)
+        var couriers = findBestCouriers(delivery)
+        for (var courier in couriers)
+            //timer=5
+            con.conWithCourier(courier)
+            con.sendToCourierDelivery(delivery)
+            //if timer pass 5 sec continue to next courier
+            //else 
+            if (con.accept())
+                res.send("dispatched delivery successfully") 
+                find_corier=true
+                
     
+}
 
-// Courier
-
-
-// exports.list_all_couriers = function(req, res) {
-//     Courier.find({}, function(err, couriers) {
-//         if (err)
-//             res.send(err);
-//         res.json(couriers);
-//     });
-// };
-
-// exports.create_courier = function(req, res) {
-//     var new_courier = new Courier(req.body);
-//     new_courier.save(function(err, courier) {
-//         console.log("created courier!!!!" + req.body);
-//         if (err)
-//             res.send(err);
-//         res.json(courier);
-//     });
-// };
-
-
-
-// exports.get_courier = function(req, res) {
-//     Courier.findById(req.params.courierId, function(err, courier) {
-//     if (err)
-//       res.send(err);
-//     res.json(courier);
-//   });
-// };
-
-
-// exports.update_courier = function(req, res) {
-//     Courier.findOneAndUpdate({_id: req.params.courierId}, req.body, {new: true}, function(err, courier) {
-//     if (err)
-//       res.send(err);
-//     res.json(courier);
-//   });
-// };
-
-
-// exports.delete_courier = function(req, res) {
-//     Courier.remove({
-//     _id: req.params.courierId
-//   }, function(err, courier) {
-//     if (err)
-//       res.send(err);
-//     res.json({ message: 'Courier successfully deleted' });
-//   });
-// };
-
-
-// delivery 
-
-// exports.list_all_deliveries = function(req, res) {
-//     delivery.find({}, function(err, task) {
-//     if (err)
-//       res.send(err);
-//     res.json(task);
-//   });
-// };
-
-
-
-// exports.add_delivery = function(req, res) {
-//   var new_delivery = new delivery(req.body);
-//   new_delivery.save(function(err, task) {
-//     console.log("added delivery!!!!" + req.body);
-//     if (err)
-//       res.send(err);
-//     res.json(task);
-//   });
-// };
-
-
-
-// exports.get_delivery = function(req, res) {
-//     delivery.findById(req.params.deliveryId, function(err, delivery) {
-//     if (err)
-//       res.send(err);
-//     res.json(task);
-//   });
-// };
-
-
-// exports.update_delivery = function(req, res) {
-//     delivery.findOneAndUpdate({_id: req.params.deliveryId}, req.body, {new: true}, function(err, delivery) {
-//     if (err)
-//       res.send(err);
-//     res.json(task);
-//   });
-// };
-
-
-// exports.delete_delivery = function(req, res) {
-//   delivery.remove({
-//     _id: req.params.deliveryId
-//   }, function(err, delivery) {
-//     if (err)
-//       res.send(err);
-//     res.json({ message: 'Delivery successfully deleted' });
-//   });
-// };
+function findBestCouriers(order){
+    var couriers = {}
+    coord = { long : order.src_longitude , lat : order.src_latitude}
+    rings = geo.getRingFromSrc(coord,1)
+    for (index in rings)
+        couriers.append(db.getCouriersInIndexByIdCompany(index,order.company_id))
+    couriers = geo.sortByLocation(couriers)
+    return couriers
+    
+};
