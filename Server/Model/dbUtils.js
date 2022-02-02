@@ -1,3 +1,7 @@
+const mongoClient = require('mongodb').MongoClient;
+const mongoDbUrl = 'mongodb+srv://ASDelivery:AaSs12345678@cluster0.u6dbb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
+let mongodb;
+
 exports.getCouriersInIndexByIdCompany = function(index,company_id){
     //TBD     in db need to save (key ,value) index -> courierID 
     //        in db_2 need to save (key ,value) courierID -> location(long,lat) 
@@ -15,9 +19,30 @@ exports.saveDelivery = function(delivery){
     console.log(delivery)
     //TBD
 }
-exports.connectDB = function(){
-    //tbd
+async function saveDelivery (delivery){
+    const databasesList = await db.get().db().admin().listDatabases();
+    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
 }
+function connect(callback){
+    mongoClient.connect(mongoDbUrl, (err, db) => {
+        mongodb = db;
+        callback();
+    });
+}
+function get(){
+    return mongodb;
+}
+
+function close(){
+    mongodb.close();
+}
+
+module.exports = {
+    connect,
+    get,
+    close,
+    saveDelivery
+};
 
 
 
