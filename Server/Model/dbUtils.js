@@ -1,29 +1,16 @@
 const mongoClient = require('mongodb').MongoClient;
 const mongoDbUrl = 'mongodb+srv://ASDelivery:AaSs12345678@cluster0.u6dbb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 let mongodb;
-
 exports.getCouriersInIndexByIdCompany = function(index,company_id){
     //TBD     in db need to save (key ,value) index -> courierID 
     //        in db_2 need to save (key ,value) courierID -> location(long,lat) 
     console.log("the company id  is "+ company_id)
 };
-exports.saveCompany = function(company){
-    console.log(company)
-    //TBD
+exports.addDocumentByCollection = async function createListing(document,collection_name){
+    const result = await get().db("delivery_management").collection(collection_name).insertOne(document);
+    console.log(`New listing created with the following id: ${result.insertedId}`);
 }
-exports.saveCourier = function(courier){
-    console.log(courier)
-    //TBD
-}
-exports.saveDelivery = function(delivery){
-    console.log(delivery)
-    //TBD
-}
-async function saveDelivery (delivery){
-    const databasesList = await db.get().db().admin().listDatabases();
-    databasesList.databases.forEach(db => console.log(` - ${db.name}`));
-}
-function connect(callback){
+exports.connectDB = function(callback){
     mongoClient.connect(mongoDbUrl, (err, db) => {
         mongodb = db;
         callback();
@@ -32,17 +19,6 @@ function connect(callback){
 function get(){
     return mongodb;
 }
-
-function close(){
-    mongodb.close();
-}
-
-module.exports = {
-    connect,
-    get,
-    close,
-    saveDelivery
-};
 
 
 
@@ -88,13 +64,4 @@ module.exports = {
 // var url = "mongodb://localhost:27017/aviv";
 
 // MongoClient.connect(url, function(err, db) {
-  
-//   if (err) throw err;
-//   console.log("Database created!");
-//   var dbo = db.db("aviv");
-//   dbo.createCollection("customers", function(err, res) {
-//     if (err) throw err;
-//     console.log("Collection created!");
-//     db.close();
-//   });
-// });
+
