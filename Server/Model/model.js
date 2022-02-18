@@ -4,16 +4,15 @@ const db = require('./dbUtils')
 const con = require('./conUtils.js')
 
 exports.sign_up_company = function(req, res) {
-    db.saveCompany(req.body)
+    db.addDocumentByCollection(req.body,"Companies")
     res.send("created new company successfully your id is")
     };
 exports.sign_up_courier = function(req, res) {
-    db.saveCourier(req.body)
+    db.addDocumentByCollection(req.body,"Couriers")
     res.send("created new courier successfully ")
-    };
-    
+    };   
 exports.add_delivery = function(req, res) {
-    db.saveDelivery(req.body)
+    db.addDocumentByCollection(req.body,"Orders")
     if (req.body.timing == "now"){
         //dispatch_delivery(req.body)
         res.send("dispatch the delivery successfully ")
