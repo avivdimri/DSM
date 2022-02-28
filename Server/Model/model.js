@@ -12,7 +12,7 @@ exports.sign_up_courier = function(req, res) {
     res.send("created new courier successfully ")
     };   
 exports.add_delivery = function(req, res) {
-    db.addDocumentByCollection(req.body,"Orders")
+    result=db.addDocumentByCollection(req.body,"Orders")
     if (req.body.timing == "now"){
         //dispatch_delivery(req.body)
         res.send("dispatch the delivery successfully ")
@@ -20,6 +20,7 @@ exports.add_delivery = function(req, res) {
         add_delivery_to_feed(req.body)
         res.send("add the delivery to feed successfully ")
     }
+    //db.updateDeliveryStatusById("621d3568949f4a9f2a14bfa0",{ status: "in progress" });
 };
     
 function add_delivery_to_feed(delivery){
