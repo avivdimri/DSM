@@ -11,8 +11,9 @@ exports.sign_up_courier = function(req, res) {
     db.addDocumentByCollection(req.body,"Couriers")
     res.send("created new courier successfully ")
     };   
-exports.add_delivery = function(req, res) {
-    result=db.addDocumentByCollection(req.body,"Orders")
+exports.add_delivery = async function(req, res) {
+    //result contains the id of the new order
+    var result= await db.addDocumentByCollection(req.body,"Orders")
     if (req.body.timing == "now"){
         //dispatch_delivery(req.body)
         res.send("dispatch the delivery successfully ")
@@ -20,7 +21,7 @@ exports.add_delivery = function(req, res) {
         add_delivery_to_feed(req.body)
         res.send("add the delivery to feed successfully ")
     }
-    //db.updateDeliveryStatusById("621d3568949f4a9f2a14bfa0",{ status: "in progress" });
+    //db.updateDeliveryStatusById(result,"in progress");
 };
     
 function add_delivery_to_feed(delivery){

@@ -10,12 +10,14 @@ exports.getCouriersInIndexByIdCompany = function(index,company_id){
 };
 exports.addDocumentByCollection = async function createListing(document,collection_name){
     const result = await get().db("delivery_management").collection(collection_name).insertOne(document);
-    console.log(`New listing created with the following id: ${result.ObjectId}`);
+    console.log(`New listing created with the following id: ${result.insertedId}`);
+    return result.insertedId;
 }
 
 exports.updateDeliveryStatusById = async function (idOfListing, updatedListing) {
+    console.log(` id: ${idOfListing}`);
     const result = await get().db("delivery_management").collection("Orders")
-                        .update({"_id": ObjectId(`${idOfListing}`)}, {$set:{"status": "completed"}}, function(err, result){ 
+                        .updateOne({"_id": ObjectId(`${idOfListing}`)}, {$set:{"status": `${updatedListing}`}}, function(err, result){ 
                             if (err) { 
                                 console.log('Error updating object: ' + err); 
                             } else { 
