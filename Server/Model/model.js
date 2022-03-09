@@ -28,8 +28,10 @@ function add_delivery_to_feed(delivery){
 
 function dispatch_delivery(delivery) {
     find_courier = false
-    while (!find_courier)
-        var couriers = findBestCouriers(delivery)
+    // while (!find_courier)
+    var couriers = findBestCouriers(delivery)
+    find_courier = true
+    return
         for (var courier in couriers)
             //timer=5
             con.conWithCourier(courier)
@@ -44,12 +46,17 @@ function dispatch_delivery(delivery) {
 }
 
 function findBestCouriers(order){
-    var couriers = {}
-    coord = { long : order.src_longitude , lat : order.src_latitude}
-    rings = geo.getRingFromSrc(coord,1)
-    for (index in rings)
-        couriers.append(db.getCouriersInIndexByIdCompany(index,order.company_id))
-    couriers = geo.sortByLocation(couriers)
-    return couriers
+        var couriers = [{"id" : 1,
+    "src": {"lat": 32.075375,"long": 34.801389}},{"id" : 2,
+    "src": {"lat": 32.095578,"long": 34.795318}},{"id" : 3,
+    "src": {"lat": 32.061155,"long": 34.791474}}]
+    // coord = { long : order.src_longitude , lat : order.src_latitude}
+    // rings = geo.getRingFromSrc(coord,1)
+    // for (index in rings)
+    //     couriers.append(db.getCouriersInIndexByIdCompany(index,order.company_id))
+    
+    geo.sortByLocation(couriers,order)
+    console.log("finish findBestBourier function")
+    // return couriers
     
 };
