@@ -1,3 +1,5 @@
+const { ObjectId } = require('mongodb');
+
 const mongoClient = require('mongodb').MongoClient;
 const mongoDbUrl = 'mongodb+srv://ASDelivery:AaSs12345678@cluster0.u6dbb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 let mongodb;
@@ -9,6 +11,19 @@ exports.getCouriersInIndexByIdCompany = function(index,company_id){
 exports.addDocumentByCollection = async function createListing(document,collection_name){
     const result = await get().db("delivery_management").collection(collection_name).insertOne(document);
     console.log(`New listing created with the following id: ${result.insertedId}`);
+    return result.insertedId;
+}
+
+exports.updateDeliveryStatusById = async function (idOfListing, updatedListing) {
+    console.log(` id: ${idOfListing}`);
+    const result = await get().db("delivery_management").collection("Orders")
+                        .updateOne({"_id": ObjectId(`${idOfListing}`)}, {$set:{"status": `${updatedListing}`}}, function(err, result){ 
+                            if (err) { 
+                                console.log('Error updating object: ' + err); 
+                            } else { 
+                                console.log('' + idOfListing + ' document status updated'); 
+                            } 
+                        })
 }
 exports.connectDB = function(callback){
     mongoClient.connect(mongoDbUrl, (err, db) => {
@@ -19,7 +34,6 @@ exports.connectDB = function(callback){
 function get(){
     return mongodb;
 }
-
 
 
 
