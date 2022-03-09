@@ -27,8 +27,12 @@ exports.updateDeliveryStatusById = async function (idOfListing, updatedListing) 
 }
 exports.connectDB = function(callback){
     mongoClient.connect(mongoDbUrl, (err, db) => {
-        mongodb = db;
-        callback();
+        if (err) { 
+            console.log('Error connecting db: ' + err); 
+        } else { 
+            mongodb = db;
+            callback();
+        }
     });
 }
 function get(){
