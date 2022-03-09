@@ -35,6 +35,11 @@ exports.connectDB = function(callback){
         }
     });
 }
+exports.findOne = async function (id,collection_name) {
+    const result = await get().db("delivery_management").collection(collection_name)
+                        .findOne(id);
+    return result;
+}
 function get(){
     return mongodb;
 }

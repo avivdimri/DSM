@@ -3,10 +3,10 @@ const geo = require('./geoUtils');
 const db = require('./dbUtils')
 const con = require('./conUtils.js')
 
-exports.sign_up_company = function(req, res) {
-    db.addDocumentByCollection(req.body,"Companies")
-    res.send("created new company successfully your id is")
-    };
+// exports.sign_up_company = function(req, res) {
+//     db.addDocumentByCollection(req.body,"Companies")
+//     res.send("created new company successfully your id is")
+//     };
 exports.sign_up_courier = function(req, res) {
     db.addDocumentByCollection(req.body,"Couriers")
     res.send("created new courier successfully ")
