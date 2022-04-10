@@ -28,7 +28,7 @@
     </div>
 </template>
 <script>
-import {createUser} from '../services/UserService'
+import {loginUser} from '../services/UserService'
 export default {
   //name: 'Login',
 //   props: ['messagetouser'],
@@ -47,7 +47,7 @@ export default {
               password: this.password,
           }
         //   this.$emit('createUser', payload)
-         createUser(payload).then(response => {
+         loginUser(payload).then(response => {
         this.messagetouser = response;
       });
           this.clearForm();

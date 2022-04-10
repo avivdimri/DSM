@@ -22,7 +22,7 @@ exports.login = function (req,res){
            res.json('succsess');
          } else {
            //if user cannot be found, display the message below
-           res.json({ error: 'wrong username or password' })
+           res.json('wrong username or password')
          }
        })
        //catch and display any error that occurs while trying to login user

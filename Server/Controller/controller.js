@@ -6,7 +6,7 @@ module.exports = function(app) {
 
     app.route('/api/register')
         .post(register.register)
-    app.route('/login')
+    app.route('/api/login')
         .post(login.login)
     // app.route('/sign_up_company')
     //     .post(model.sign_up_company)
