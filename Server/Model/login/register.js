@@ -13,7 +13,7 @@ exports.register= function(req, res){
       }
       db.findOne({
         //ensure username is unique, i.e the username is not already in the database
-        user_name:req.body.user_name
+        user_name:userData.user_name
       },"Companies")
         .then(user => {
           //if the username is unique 
@@ -25,7 +25,7 @@ exports.register= function(req, res){
             db.addDocumentByCollection(userData,"Companies")
                 .then(user => {
                   //after successfully creating userData display registered message
-                  res.json('The register of ' + req.body.user_name + ' complete!')
+                  res.json('The register of ' + userData.company_name + ' complete!')
                 })
                 .catch(err => {
                   //if an error occured while trying to create userData, go ahead and display the error
@@ -33,7 +33,7 @@ exports.register= function(req, res){
                 })
           } else {
             //if the username is not unique, display that username is already registered with an account
-            res.json({ error: 'The username ' + req.body.user_name + ' is registered with an account' })
+            res.json('The email ' + userData.user_name + ' is already in use' )
           }
         })
         .catch(err => {
