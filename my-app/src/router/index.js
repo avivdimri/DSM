@@ -4,13 +4,18 @@ Vue.use(VueRouter)
   const routes = [
   {
     path: '/',
-    name: 'signup',
+    name: 'home',
     component: () => import('../components/Signup.vue')
   },
   {
     path: '/login',
     name: 'login',
     component: () => import('../components/Login.vue')
+  },
+  {
+    path: '/signup',
+    name: 'signup',
+    component: () => import('../components/Signup.vue')
   }
 //   {
 //     path: '/forgot-password',
