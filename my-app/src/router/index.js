@@ -5,7 +5,7 @@ Vue.use(VueRouter)
   {
     path: '/',
     name: 'home',
-    component: () => import('../components/Signup.vue')
+    component: () => import('../components/Home.vue')
   },
   {
     path: '/login',

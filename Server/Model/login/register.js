@@ -25,19 +25,20 @@ exports.register= function(req, res){
             db.addDocumentByCollection(userData,"Companies")
                 .then(user => {
                   //after successfully creating userData display registered message
-                  res.json('The register of ' + userData.company_name + ' complete!')
+                  res.json({user:user,
+                    message:'The register of ' + userData.company_name + ' complete!'})
                 })
                 .catch(err => {
                   //if an error occured while trying to create userData, go ahead and display the error
-                  res.send('error1:' + err)
+                  res.json({ message:'error1:' + err})
                 })
           } else {
             //if the username is not unique, display that username is already registered with an account
-            res.json('The email ' + userData.user_name + ' is already in use' )
+            res.json( {message:'The email ' + userData.user_name + ' is already in use'} )
           }
         })
         .catch(err => {
           //display error if an error occured
-          res.send('error2:' + err)
+          res.json({message:'error2:' + err})
         })
     }

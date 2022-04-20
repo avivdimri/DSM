@@ -14,19 +14,16 @@ exports.login = function (req,res){
        .then(user => {
          //if the username and password match exist in database then the user exists
          if (user) {
-           const payload = {
-            user_name: user.user_name,  
-            password: user.password 
-           }
            //after successful login display token and payload data
-           res.json('succsess');
+           res.json({user:user,
+                    message:'succsess'});
          } else {
            //if user cannot be found, display the message below
-           res.json('wrong username or password')
+           res.json({message:'wrong username or password'})
          }
        })
        //catch and display any error that occurs while trying to login user
        .catch(err => {
-         res.send('error:' + err)
+         res.json({message:'error:' + err})
        })
 }

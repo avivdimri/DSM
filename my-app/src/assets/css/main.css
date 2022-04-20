@@ -26,6 +26,11 @@
     justify-content: center;
     flex-direction: column;    
   }
+  h1{
+    color: rgb(255, 255, 255);
+    text-align:center;
+    margin-top: 10%;
+  }
   .inner-block {
     width: 500px;
     margin:65%;

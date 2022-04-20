@@ -11,7 +11,7 @@ exports.getCouriersInIndexByIdCompany = function(index,company_id){
 exports.addDocumentByCollection = async function createListing(document,collection_name){
     const result = await get().db("delivery_management").collection(collection_name).insertOne(document);
     console.log(`New listing created with the following id: ${result.insertedId}`);
-    return result.insertedId;
+    return this.findOne({_id:result.insertedId},collection_name);
 }
 
 exports.updateDeliveryStatusById = async function (idOfListing, updatedListing) {
