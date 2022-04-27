@@ -11,21 +11,19 @@
                     </div>
                     <div class="form-group">
                         <label>Password</label>
-                        <input type="password" name="password" v-model="password" class="form-control form-control-lg" />
+                        <input type="password" pattern=".{6,}"  required title="6 characters minimum" name="password" v-model="password" class="form-control form-control-lg" />
                     </div>
                     <div class="form-group">
                         <label>Company name</label>
-                        <input type="company" name="company_name" v-model="company_name" class="form-control form-control-lg" />
+                        <input type="company" pattern=".{3,}"  required title="3 characters minimum" name="company_name" v-model="company_name" class="form-control form-control-lg" />
                     </div>
-                    <button type="button" @click='createUser()' class="btn btn-dark btn-lg btn-block">Create</button>
+                    <button @click='createUser()' class="btn btn-dark btn-lg btn-block">Create</button>
                     <!-- <p class="forgot-password text-right mt-2 mb-4">
                         <router-link to="/forgot-password">Forgot password ?</router-link>
                     </p> -->
                     <div class="social-icons">
                         <ul>
-                            <li><a href="#"><i class="fa fa-google"></i></a></li>
-                            <li><a href="#"><i class="fa fa-facebook"></i></a></li>
-                            <li><a href="#"><i class="fa fa-twitter"></i></a></li>
+                            <li><a @click="googlesignup()" href="#"><i class="fa fa-google"></i></a></li>
                         </ul>
                     </div>
                     <p class="forgot-password text-right">
@@ -85,10 +83,17 @@ export default {
           this.company_name = "";
       },
       validInput(){
-        if(this.user_name.length>1 && this.user_name.search>=0 && this.password.length>5 && this.company_name.length>0){
+        if(this.user_name.length>1 &&this.user_name.search('@')>0 && this.password.length>5 && this.company_name.length>2){
             return true;
         }
         return false;
+    },
+    async googlesignup() {
+      const googleUser = await this.$gAuth.signIn();
+      this.user_name=googleUser.getBasicProfile().Bv;
+      this.password=googleUser.getId();
+      this.company_name=googleUser.getBasicProfile().tf;
+      this.createUser();
     },
   },
   mounted(){
