@@ -85,7 +85,7 @@ export default {
           this.company_name = "";
       },
       validInput(){
-        if(this.user_name.length>1 && this.user_name.search>=0 && this.password.length>5){
+        if(this.user_name.length>1 && this.user_name.search>=0 && this.password.length>5 && this.company_name.length>0){
             return true;
         }
         return false;
