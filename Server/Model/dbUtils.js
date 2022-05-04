@@ -1,3 +1,4 @@
+const { json } = require('body-parser');
 const { ObjectId } = require('mongodb');
 
 const mongoClient = require('mongodb').MongoClient;
@@ -11,11 +12,10 @@ exports.getCouriersInIndexByIdCompany = function(index,company_id){
 exports.addDocumentByCollection = async function createListing(document,collection_name){
     const result = await get().db("delivery_management").collection(collection_name).insertOne(document);
     console.log(`New listing created with the following id: ${result.insertedId}`);
-    return result.insertedId;
+    return this.findOne({_id:result.insertedId},collection_name);
 }
 
 exports.updateDeliveryStatusById = async function (idOfListing, updatedListing) {
-    console.log(` id: ${idOfListing}`);
     const result = await get().db("delivery_management").collection("Orders")
                         .updateOne({"_id": ObjectId(`${idOfListing}`)}, {$set:{"status": `${updatedListing}`}}, function(err, result){ 
                             if (err) { 
@@ -25,11 +25,32 @@ exports.updateDeliveryStatusById = async function (idOfListing, updatedListing) 
                             } 
                         })
 }
+exports.updateDocument = async function (collection,idOfListing, updatedListing) {
+    const result = await get().db("delivery_management").collection(collection)
+                        .updateOne(idOfListing,{ $set:updatedListing}
+                            , function(err, result){ 
+                            if (err) { 
+                                console.log('Error updating object: ' + err); 
+                            } else { 
+                                console.log('' + idOfListing.user_name + ' document updated'); 
+                            } 
+                        });
+    return this.findOne(idOfListing,collection);
+}
 exports.connectDB = function(callback){
     mongoClient.connect(mongoDbUrl, (err, db) => {
-        mongodb = db;
-        callback();
+        if (err) { 
+            console.log('Error connecting db: ' + err); 
+        } else { 
+            mongodb = db;
+            callback();
+        }
     });
+}
+exports.findOne = async function (id,collection_name) {
+    const result = await get().db("delivery_management").collection(collection_name)
+                        .findOne(id);
+    return result;
 }
 function get(){
     return mongodb;
