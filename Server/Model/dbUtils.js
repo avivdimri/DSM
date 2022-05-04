@@ -1,3 +1,4 @@
+const { json } = require('body-parser');
 const { ObjectId } = require('mongodb');
 
 const mongoClient = require('mongodb').MongoClient;
@@ -15,7 +16,6 @@ exports.addDocumentByCollection = async function createListing(document,collecti
 }
 
 exports.updateDeliveryStatusById = async function (idOfListing, updatedListing) {
-    console.log(` id: ${idOfListing}`);
     const result = await get().db("delivery_management").collection("Orders")
                         .updateOne({"_id": ObjectId(`${idOfListing}`)}, {$set:{"status": `${updatedListing}`}}, function(err, result){ 
                             if (err) { 
@@ -24,6 +24,18 @@ exports.updateDeliveryStatusById = async function (idOfListing, updatedListing) 
                                 console.log('' + idOfListing + ' document status updated'); 
                             } 
                         })
+}
+exports.updateDocument = async function (collection,idOfListing, updatedListing) {
+    const result = await get().db("delivery_management").collection(collection)
+                        .updateOne(idOfListing,{ $set:updatedListing}
+                            , function(err, result){ 
+                            if (err) { 
+                                console.log('Error updating object: ' + err); 
+                            } else { 
+                                console.log('' + idOfListing.user_name + ' document updated'); 
+                            } 
+                        });
+    return this.findOne(idOfListing,collection);
 }
 exports.connectDB = function(callback){
     mongoClient.connect(mongoDbUrl, (err, db) => {
