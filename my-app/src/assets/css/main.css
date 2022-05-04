@@ -1,6 +1,7 @@
 * {
     box-sizing: border-box;
   }
+  
   body {
     background-image:url('home.jpg');
     background-size: cover;
