@@ -71,7 +71,10 @@ function registerCourier(user,res){
     //values should be those in the user model important
     user_name : user.user_name, 
     password: user.password,
-    
+    first_name : user.first_name,
+    last_name : user.last_name,
+    phone_number : user.phone_number,
+    vehicleType : user.vehicleType
   }
   db.findOne({
     //ensure username is unique, i.e the username is not already in the database
