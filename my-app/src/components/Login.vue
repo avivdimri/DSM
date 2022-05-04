@@ -69,7 +69,7 @@ export default {
             });
             this.clearForm();
         }else{
-            this.messagetouser = 'please enter valid username and password';
+            this.messagetouser = 'please enter valid input';
         }
         
     },

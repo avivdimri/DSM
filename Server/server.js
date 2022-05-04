@@ -17,11 +17,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 controller(app); //register the route
-app.use(express.static(path.join(__dirname, "../my-app/dist/")));
-app.get("/", (req, res, next) => {
-  console.log("hi");
-  res.sendFile(path.join(__dirname, "../my-app/dist/index.html"));
-    });
+// app.use(express.static(path.join(__dirname, "../my-app/dist/")));
+// app.get("/", (req, res, next) => {
+//   console.log("hi");
+//   res.sendFile(path.join(__dirname, "../my-app/dist/index.html"));
+//     });
 app.use(function(req, res) {
   res.status(404).send({url: req.originalUrl + ' not found'})
 });

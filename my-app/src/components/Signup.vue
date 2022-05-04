@@ -46,7 +46,6 @@ export default {
   components: {
     Header
   },
-//   props: ['messagetouser'],
   data() {
     return {
       user_name: '',
@@ -74,7 +73,7 @@ export default {
             this.clearForm();
         }
         else{
-            this.messagetouser = 'please enter valid username and password';
+            this.messagetouser = 'please enter valid input';
         }
       },
       clearForm() {

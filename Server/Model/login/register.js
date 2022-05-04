@@ -4,17 +4,21 @@ const crypto = require('crypto')
 var db = require('../dbUtils');
 // Creating salt for all users
 let salt = 'f844b09ff50c'
+let collection = "Couriers";
 exports.register= function(req, res){
+  if(req.body.company_name){
+    collection="Companies";
+  }
     const userData = {
         //values should be those in the user model important
         user_name : req.body.user_name, 
         password: req.body.password,
-        company_name: req.body.company_name,
+//        company_name: req.body.company_name,
       }
       db.findOne({
         //ensure username is unique, i.e the username is not already in the database
         user_name:userData.user_name
-      },"Companies")
+      },collection)
         .then(user => {
           //if the username is unique 
           if (!user) {
@@ -22,11 +26,11 @@ exports.register= function(req, res){
             1000, 64, `sha512`).toString(`hex`);
             userData.password = hash
             //if the username is unique go ahead and create userData after hashing password and salt
-            db.addDocumentByCollection(userData,"Companies")
+            db.addDocumentByCollection(req.body,collection)
                 .then(user => {
                   //after successfully creating userData display registered message
                   res.json({user:user,
-                    message:'The register of ' + userData.company_name + ' complete!'})
+                    message:'The register of user complete!'})
                 })
                 .catch(err => {
                   //if an error occured while trying to create userData, go ahead and display the error
