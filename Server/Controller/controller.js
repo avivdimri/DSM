@@ -8,13 +8,21 @@ module.exports = function(app) {
         .post(register.register)
     app.route('/api/login')
         .post(login.login)
+    app.route('/api/add')
+        .post(model.addCourier)
+    app.route('/api/courier')
+        .get(model.find_coriers)
+    app.route('/api/delete')
+        .delete(model.deleteC)
+    // app.route('/api/delete')
+    //     .delete(model.deleteC)
     // app.route('/sign_up_company')
     //     .post(model.sign_up_company)
       
-    app.route('/sign_up_courier')
-        .post(model.sign_up_courier)
+    // app.route('/sign_up_courier')
+    //     .post(model.sign_up_courier)
       
-    app.route('/companyID/deliveries')
-        .post(model.add_delivery)
+    // app.route('/companyID/deliveries')
+    //     .post(model.add_delivery)
     
 };

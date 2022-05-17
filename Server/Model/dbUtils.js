@@ -37,6 +37,11 @@ exports.updateDocument = async function (collection,idOfListing, updatedListing)
                         });
     return this.findOne(idOfListing,collection);
 }
+exports.pushToArray = async function (collection,idOfListing, updatedListing) {
+    const result = await get().db("delivery_management").collection(collection)
+                        .updateOne(idOfListing,{ $addToSet: updatedListing });
+                        return this.findOne(idOfListing,collection);
+}
 exports.connectDB = function(callback){
     mongoClient.connect(mongoDbUrl, (err, db) => {
         if (err) { 
@@ -50,6 +55,16 @@ exports.connectDB = function(callback){
 exports.findOne = async function (id,collection_name) {
     const result = await get().db("delivery_management").collection(collection_name)
                         .findOne(id);
+    return result;
+}
+exports.getCouriers = async function (id) {
+    const result = await get().db("delivery_management").collection("Couriers")
+                        .find(id ).toArray();
+    return result;
+}
+exports.removeDocumentById = async function (collection,id) {
+    const result = await get().db("delivery_management").collection(collection)
+                        .remove({"_id": ObjectId(`${id}`)});
     return result;
 }
 function get(){
