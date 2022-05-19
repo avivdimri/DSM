@@ -45,6 +45,7 @@ exports.addCourier = async function(req, res) {
           //display error if an error occured
           res.json({status:'ERROR',message:'error2:' + err})
         })
+      }
     //res.send("created new courier successfully ")
 exports.sign_up_courier = function(req, res) {
     db.addDocumentByCollection(req.body,"Couriers")
