@@ -1,0 +1,41 @@
+const csv = require('csv-parser')
+const fs = require('fs')
+const results = [];
+const headers = ["src/lat","src/long",'destination/lat','destination/long',"src_contact","timing","company_id"]
+exports.parse = async function(file_name) {
+    json = await csvToJson(file_name)
+    json.forEach((order) =>{ 
+        for(let key of Object.keys(order)){
+            console.log(key)
+            console.log(headers.includes(key))
+              if (!headers.includes(key))
+                console.log("the field : "+key+"is not exist in headers format :" + headers)
+                
+        }
+        lat  = order['src/lat']
+        delete order['src/lat']
+        long = order['src/long']
+        delete order['src/long']
+        order['src'] = {"lat" : lat, "long" : long}
+        lat  = order['destination/lat']
+        delete order['destination/lat']
+        long = order['destination/long']
+        delete order['destination/long']
+        order['destination'] = {"lat" : lat, "long" : long}
+        order['status'] = "open"
+    });
+    return json
+
+}
+
+function csvToJson(file_name){
+    return new Promise((resolve, reject) => {
+        fs.createReadStream(file_name)
+      .pipe(csv())
+      .on('data', (data) => results.push(data))
+      .on('end', () => {
+        console.log("aviv");
+        resolve(results)
+        });
+        })
+}

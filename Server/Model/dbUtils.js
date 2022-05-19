@@ -1,3 +1,4 @@
+
 const { json } = require('body-parser');
 const { ObjectId } = require('mongodb');
 
@@ -70,4 +71,61 @@ exports.removeDocumentById = async function (collection,id) {
 function get(){
     return mongodb;
 }
+
+exports.getdoc = async function(collection,userId){
+     var compId = await get().db("delivery_management").collection("Couriers").findOne({ _id: ObjectId(userId)},{ projection: { _id:0,company_id:1 }});
+     console.log("companies : "+ JSON.stringify(compId["company_id"]))
+     const result = await get().db("delivery_management").collection("Orders").find({ company_id: { $in : compId["company_id"]}}).toArray();
+    // const result = await get().db("delivery_management").collection("Orders").find();
+    // console.log("New listing created with the following id:"+ JSON.stringify(result));
+    return result;
+}
+exports.updateDoc = async function(collection,query_find,query_update){
+    
+    var updated = await get().db("delivery_management").collection(collection).updateMany(query_find,query_update);
+    return updated
+}
+
+
+// mongodb instance connection url connection
+//connection to DB in the server by Atlas
+// const {MongoClient} = require('mongodb');
+// var uri = "mongodb+srv://Node_user:Node_user@cluster0.u6dbb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"
+// const client = new MongoClient(uri);
+// async function listDatabases(client){
+//   databasesList = await client.db().admin().listDatabases();
+
+//   console.log("Databases:");
+//   databasesList.databases.forEach(db => console.log(` - ${db.name}`));
+// };
+// connectDB(client).catch(console.error)
+
+// async function connectDB(client) {
+ 
+//   try {
+//     await client.connect();
+//     await listDatabases(client);
+  
+//   } catch (e) {
+//     console.error(e);
+//   }
+//   finally {
+//     await client.close();
+//   }
+// }
+// async function listDatabases(client){
+//   databasesList = await client.db().admin().listDatabases();
+
+//   console.log("Databases:");
+//   databasesList.databases.forEach(db => console.log(` - ${db.name}`));
+// };
+
+
+ //connection DB locally
+
+// var MongoClient = require('mongodb').MongoClient;
+// var url = "mongodb://localhost:27017/aviv";
+
+// MongoClient.connect(url, function(err, db) {
+
 
