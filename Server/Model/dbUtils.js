@@ -1,3 +1,4 @@
+
 const { json } = require('body-parser');
 const { ObjectId } = require('mongodb');
 
@@ -55,8 +56,19 @@ exports.findOne = async function (id,collection_name) {
 function get(){
     return mongodb;
 }
-
-
+exports.getdoc = async function(collection,userId){
+     var compId = await get().db("delivery_management").collection("Couriers").findOne({ _id: ObjectId(userId)},{ projection: { _id:0,company_id:1 }});
+     console.log("companies : "+ JSON.stringify(compId["company_id"]))
+     const result = await get().db("delivery_management").collection("Orders").find({ company_id: { $in : compId["company_id"]}}).toArray();
+    // const result = await get().db("delivery_management").collection("Orders").find();
+    // console.log("New listing created with the following id:"+ JSON.stringify(result));
+    return result;
+}
+exports.updateDoc = async function(collection,query_find,query_update){
+    
+    var updated = await get().db("delivery_management").collection(collection).updateMany(query_find,query_update);
+    return updated
+}
 
 
 // mongodb instance connection url connection
