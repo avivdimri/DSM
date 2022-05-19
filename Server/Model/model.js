@@ -9,6 +9,44 @@ const { ObjectId } = require('mongodb');
 //     db.addDocumentByCollection(req.body,"Companies")
 //     res.send("created new company successfully your id is")
 //     };
+exports.addCourier = async function(req, res) {
+    const user_name=req.body.user_name;
+    const company_id = req.body.company_id;
+    db.findOne({
+        //ensure username is unique, i.e the username is not already in the database
+        user_name:user_name
+      },"Couriers")
+        .then(user => {
+          //if the username is unique 
+          if (!user) {
+            //if the username is unique go ahead and create userData after hashing password and salt
+            db.addDocumentByCollection(req.body,"Couriers")
+                .then(user => {
+                  //after successfully creating userData display registered message
+                  res.json( {status:'SUCCESS',message:'The register of user complete!'})
+                })
+                .catch(err => {
+                  //if an error occured while trying to create userData, go ahead and display the error
+                  res.json( {status:'ERROR', message:'error1:' + err})
+                })
+          } else {
+            db.pushToArray("Couriers",{user_name:user_name},{ company_id: company_id  })
+              .then(user => {
+                //after successfully creating userData display registered message
+                res.json( {status:'SUCCESS',message:'The register of user complete!'})
+              })
+              .catch(err => {
+                //if an error occured while trying to create userData, go ahead and display the error
+                res.json( {status:'ERROR', message:'error1:' + err})
+              })
+          }
+        })
+        .catch(err => {
+          //display error if an error occured
+          res.json({status:'ERROR',message:'error2:' + err})
+        })
+      }
+    //res.send("created new courier successfully ")
 exports.sign_up_courier = function(req, res) {
     db.addDocumentByCollection(req.body,"Couriers")
     res.send("created new courier successfully ")
@@ -37,7 +75,14 @@ exports.add_delivery = async function(req, res) {
       
     //db.updateDeliveryStatusById(result,"in progress");
 };
-    
+exports.findCourier = async function(req, res) {
+    res.send(await db.getDocs("Couriers",JSON.parse(req.query.params)));
+};
+  
+
+exports.deleteC = async function(req, res) {
+    res.send(await db.removeDocumentById(req.query.collection,req.query._id));
+};
 function add_delivery_to_feed(delivery){
     //TBD
 }

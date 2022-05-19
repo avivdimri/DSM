@@ -38,6 +38,11 @@ exports.updateDocument = async function (collection,idOfListing, updatedListing)
                         });
     return this.findOne(idOfListing,collection);
 }
+exports.pushToArray = async function (collection,idOfListing, updatedListing) {
+    const result = await get().db("delivery_management").collection(collection)
+                        .updateOne(idOfListing,{ $addToSet: updatedListing });
+                        return this.findOne(idOfListing,collection);
+}
 exports.connectDB = function(callback){
     mongoClient.connect(mongoDbUrl, (err, db) => {
         if (err) { 
@@ -53,9 +58,20 @@ exports.findOne = async function (id,collection_name) {
                         .findOne(id);
     return result;
 }
+exports.getDocs = async function (collection,id) {
+    const result = await get().db("delivery_management").collection(collection)
+                        .find(id ).toArray();
+    return result;
+}
+exports.removeDocumentById = async function (collection,id) {
+    const result = await get().db("delivery_management").collection(collection)
+                        .remove({"_id": ObjectId(`${id}`)});
+    return result;
+}
 function get(){
     return mongodb;
 }
+
 exports.getdoc = async function(collection,userId){
      var compId = await get().db("delivery_management").collection("Couriers").findOne({ _id: ObjectId(userId)},{ projection: { _id:0,company_id:1 }});
      console.log("companies : "+ JSON.stringify(compId["company_id"]))
@@ -111,4 +127,5 @@ exports.updateDoc = async function(collection,query_find,query_update){
 // var url = "mongodb://localhost:27017/aviv";
 
 // MongoClient.connect(url, function(err, db) {
+
 
