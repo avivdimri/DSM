@@ -144,12 +144,30 @@ function findBestCouriers(order){
 exports.add_courier_token = async function(req, res) {
     var id = req.params.userId
     var courier_token = req.body.token
-    console.log("the id is " + id)
     console.log("the token is :" + courier_token)
 
     var object_id = new ObjectId(id);
-    query_find = { _id: object_id}
-    query_update = {$set: {token:courier_token}}
+    var query_find = { _id: object_id}
+    var query_update = {$set: {token:courier_token}}
     result = await db.updateDoc("Couriers",query_find,query_update)
+    res.send(JSON.stringify(result))
+}
+
+exports.get_order = async function(req, res){
+    var order_id = req.params.orderId
+    console.log("the parma id is : " + order_id)
+    var object_id = new ObjectId(order_id)
+    var query_find = {_id: object_id}
+    result = await db.find1One(query_find,"Orders");
+    console.log("the order is : " +JSON.stringify(result) )
+    res.send(JSON.stringify(result))
+}
+exports.get_courier = async function(req, res){
+    var courier_id = req.params.courierId
+    console.log("the parma id is : " + courier_id)
+    var object_id = new ObjectId(courier_id)
+    var query_find = {_id: object_id}
+    result = await db.find1One(query_find,"Couriers");
+    console.log("the Courier is : " +JSON.stringify(result) )
     res.send(JSON.stringify(result))
 }
