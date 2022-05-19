@@ -60,7 +60,8 @@ exports.add_delivery = async function(req, res) {
 exports.findCourier = async function(req, res) {
     res.send(await db.getDocs("Couriers",JSON.parse(req.query.params)));
 };
-   
+  
+
 exports.deleteC = async function(req, res) {
     res.send(await db.removeDocumentById(req.query.collection,req.query._id));
 };
