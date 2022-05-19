@@ -57,8 +57,8 @@ exports.add_delivery = async function(req, res) {
     }
     //db.updateDeliveryStatusById(result,"in progress");
 };
-exports.find_coriers = async function(req, res) {
-    res.send(await db.getCouriers(JSON.parse(req.query.params)));
+exports.findCourier = async function(req, res) {
+    res.send(await db.getDocs("Couriers",JSON.parse(req.query.params)));
 };
    
 exports.deleteC = async function(req, res) {

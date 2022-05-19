@@ -11,7 +11,7 @@ module.exports = function(app) {
     app.route('/api/add')
         .post(model.addCourier)
     app.route('/api/courier')
-        .get(model.find_coriers)
+        .get(model.findCourier)
     app.route('/api/delete')
         .delete(model.deleteC)
     // app.route('/api/delete')
