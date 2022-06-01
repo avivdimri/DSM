@@ -1,0 +1,2 @@
+src/lat,src/long,dest/lat,dest/long,src_contact/name,src_contact/phone,dst_contact/name,dst_contact/phone,express,company_id
+32.0626,34.7790,32.048989,34.798414,Moshe,0501234567,Shir,0501234567,express,5

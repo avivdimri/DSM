@@ -75,10 +75,10 @@ function registerCompany(user,res){
     password: user.password,
     company_name: user.company_name
   }
-  db.find1One({
+  db.findOne("Companies",{
     //ensure username is unique, i.e the username is not already in the database
     user_name:userData.user_name
-  },"Companies")
+  })
     .then(user => {
       //if the username is unique 
       if (!user) {
@@ -119,10 +119,10 @@ function registerCourier(user,res){
     VehicleType : user.VehicleType,
     status     : user.status,
   }
-  db.find1One({
+  db.findOne("Couriers",{
     //ensure username is unique, i.e the username is not already in the database
     user_name:userData.user_name
-  },"Couriers")
+  })
     .then(user => {
       //if the username is unique 
       if (!user) {
@@ -140,8 +140,7 @@ function registerCourier(user,res){
             db.updateDocument("Couriers",user,userData)
                 .then(user => {
                   //after successfully creating userData display registered message
-                  res.json({user:user,
-                    message:'The register of user complete!'});
+                  res.send('The registerion of user is completed successfuly!');
                 })
                 .catch(err => {
                   //if an error occured while trying to create userData, go ahead and display the error

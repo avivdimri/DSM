@@ -3,11 +3,13 @@ const controller = require('./Controller/controller'); //importing route
 bodyParser = require('body-parser');
 const path = require('path');
 db = require('./Model/dbUtils')
+firebase = require('./Model/firebaseUtils')
 db.connectDB(() => {
   app.listen(process.env.PORT || 3000, function (){
       console.log("DSM RESTful API server start");
   });
 });
+firebase.connectFirebase();
 
 var express = require('express')
 app = express();
