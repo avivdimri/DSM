@@ -53,19 +53,19 @@ exports.connectDB = function(callback){
         }
     });
 }
-exports.findOne = async function (id,collection_name) {
+exports.findOne = async function (id,collection_name,queryProjection={}) {
     const result = await get().db("delivery_management").collection(collection_name)
-                        .findOne(id);
+                        .findOne(id,queryProjection);
     return result;
 }
-exports.getDocs = async function (collection,id) {
+exports.getDocs = async function (collection,id,queryProjection={}) {
     const result = await get().db("delivery_management").collection(collection)
-                        .find(id ).toArray();
+                        .find(id,queryProjection ).toArray();
     return result;
 }
 exports.removeDocumentById = async function (collection,id) {
     const result = await get().db("delivery_management").collection(collection)
-                        .remove({"_id": ObjectId(`${id}`)});
+                        .deleteOne({"_id": ObjectId(`${id}`)});
     return result;
 }
 function get(){
