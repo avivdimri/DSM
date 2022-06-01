@@ -8,12 +8,16 @@ module.exports = function(app) {
         .post(register.register)
     app.route('/api/login')
         .post(login.login)
+
     app.route('/api/add')
         .post(model.addCourier)
     app.route('/api/courier')
         .get(model.findCourier)
     app.route('/api/delete')
         .delete(model.deleteC)
+    app.route('/api/login_courier')
+        .post(login.login_courier)
+    
     app.route('/sign_up_courier')
         .post(model.sign_up_courier)
     app.route('/sign_in_courier')
@@ -27,9 +31,16 @@ module.exports = function(app) {
     
     app.route('/courier_status/:userId')
      .put(model.update_courier_status)
+     app.route('/delivery_status/:deliveryId')
+     .put(model.update_delivery_status)
     
 
     app.route('/courier_token/:userId')
     .put(model.add_courier_token)
+
+    app.route('/get_order/:orderId')
+    .get(model.get_order)
+    app.route('/get_courier/:courierId')
+    .get(model.get_courier)
          
 };

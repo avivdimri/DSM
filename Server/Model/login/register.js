@@ -25,6 +25,48 @@ function getUserType(user){
   return "Couriers"
 }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 function registerCompany(user,res){
  
   const userData = {
@@ -33,10 +75,10 @@ function registerCompany(user,res){
     password: user.password,
     company_name: user.company_name
   }
-  db.findOne({
+  db.findOne("Companies",{
     //ensure username is unique, i.e the username is not already in the database
     user_name:userData.user_name
-  },"Companies")
+  })
     .then(user => {
       //if the username is unique 
       if (!user) {
@@ -66,7 +108,7 @@ function registerCompany(user,res){
 }
 
 function registerCourier(user,res){
- 
+  console.log("111111")
   const userData = {
     //values should be those in the user model important
     user_name : user.user_name, 
@@ -74,42 +116,41 @@ function registerCourier(user,res){
     first_name : user.first_name,
     last_name : user.last_name,
     phone_number : user.phone_number,
-    vehicleType : user.vehicleType
+    VehicleType : user.VehicleType,
+    status     : user.status,
   }
-  db.findOne({
+  db.findOne("Couriers",{
     //ensure username is unique, i.e the username is not already in the database
     user_name:userData.user_name
-  },"Couriers")
+  })
     .then(user => {
       //if the username is unique 
       if (!user) {
-        res.json({message:'user name not found, please contact your company'});
-
+        res.send('user name not found, please contact your company');
       } else {
-
         if(user.password){
-          res.json({message:'user already in use'});
+          res.send('user already in use');
 
         }else{
           let hash = crypto.pbkdf2Sync(userData.password, salt,  
             1000, 64, `sha512`).toString(`hex`);
             userData.password = hash
+            console.log(userData.VehicleType)
             //if the username is unique go ahead and create userData after hashing password and salt
             db.updateDocument("Couriers",user,userData)
                 .then(user => {
                   //after successfully creating userData display registered message
-                  res.json({user:user,
-                    message:'The register of user complete!'});
+                  res.send('The registerion of user is completed successfuly!');
                 })
                 .catch(err => {
                   //if an error occured while trying to create userData, go ahead and display the error
-                  res.json({ message:'error1:' + err});
+                  res.send(err);
                 })
         }
       }
     })
     .catch(err => {
       //display error if an error occured
-      res.json({message:'error2:' + err});
+      res.send(err);
     })
 }

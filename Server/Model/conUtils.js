@@ -8,3 +8,6 @@ exports.sendToCourierDelivery = function(delivery){
     //TBD
     console.log("send new delivery message ")
 }
+exports.sendNotfication = function(courier){
+    //TBD
+}
