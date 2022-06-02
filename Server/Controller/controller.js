@@ -26,7 +26,7 @@ module.exports = function(app) {
     app.route('/companyID/deliveries')
         .post(model.add_delivery)
 
-    app.route('/')
+    app.route('/a')
      .get(model.consolelog)
     
     app.route('/courier_status/:userId')
