@@ -37,10 +37,10 @@ async function get_duration(src,dest){
                         var origin = distances.origin_addresses[i];
                         var destination = distances.destination_addresses[j];
                         if (distances.rows[0].elements[j].status == 'OK') {
-                            var dis = distances.rows[i].elements[j].distance.value;
+                            var dis = distances.rows[i].elements[j].distance;;
                             var dur = distances.rows[i].elements[j].duration;
-                            resolve({'duration' : dur,'distances' : dis});
-                            console.log('Distance from ' + origin + ' to ' + destination + ' is ' + distance);
+                            resolve({'duration' : dur,'distance' : dis});
+                            console.log('Distance from ' + origin + ' to ' + destination + ' is ' + dis.text);
                         } else {
                             reject(  console.log(destination + ' is not reachable by land from ' + origin))
                         }
@@ -67,24 +67,10 @@ exports.sortByLocation = async function(couriers,delivery){
         console.log("dur_dis is  " +JSON.stringify(dur_dis))
         sortCouriers.push({"courier":couriers[i],"duration":dur_dis.duration,"distance":dur_dis.distance })
     }
-    
-
-    //console.log("dis is " + x.dis)
-    //console.log("dur is " + x.dur.text)
-    // cours.push({"id": c.id, "duration" : x.dur,
-    // "distance" : x.dis}) 
-    // function(error) { /* code if some error */ })
-   
-    // couriers.forEach(async(c) => {
-    //     dur,dis = await get_duration(c, order)
-    //     console.log("dur is " + dur)
-    //     cours.push({"id": c.id, "duration" : dur,
-    //     "distance" : dis
-    // })});
-
     await sortCouriers.sort(function (a, b) {
         return a.duration - b.duration;
       });
    
     console.log(JSON.stringify(sortCouriers))
+    return sortCouriers
 }

@@ -6,7 +6,7 @@ const mongoClient = require('mongodb').MongoClient;
 const mongoDbUrl = 'mongodb+srv://ASDelivery:AaSs12345678@cluster0.u6dbb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 let mongodb;
 exports.getCouriersByIdCompany = async function(company_id){
-    query_find = { company_id: company_id }
+    query_find = { company_id: company_id,status:"idle" ,token: { $exists: true } }
     query_projection = {projection: {_id: 1,token: 1}}
     result = await db.getDocs("Couriers",query_find,query_projection)
     return result
