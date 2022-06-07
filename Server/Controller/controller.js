@@ -36,7 +36,7 @@ module.exports = function(app) {
      .put(model.update_courier_status)
     app.route('/delivery_status/:deliveryId')
      .put(model.update_delivery_status)
-    app.route('updateCourierInfo/$userId')
+    app.route('/updateCourierInfo/:userId')
      .put(model.update_courier_info)
     
 

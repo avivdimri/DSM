@@ -121,10 +121,11 @@ exports.update_courier_info = async function(req, res) {
     phone_number : req.body.phone_number,
     //VehicleType : req.body.VehicleType,
   }
+  console.log("the new courier Info is : " +JSON.stringify(userData))
 
   var object_id = new ObjectId(id);
   query_find = { _id: object_id}
-  query_update = {$set: userData}
+  query_update = {$set: {first_name:req.body.first_name,last_name:req.body.last_name,phone_number:req.body.phone_number}}
   result = await db.updateDoc("Couriers",query_find,query_update)
   res.send(JSON.stringify(result))
 }
