@@ -8,7 +8,7 @@ firebase = require('./Model/firebaseUtils')
 db.connectDB(() => {
   app.listen(process.env.PORT || 3000, function (){
     const d_t = new Date(2022,09,03,16);
-    console.log(d_t);
+    //console.log(d_t);
     let year = d_t.getFullYear();
     let month = ("0" + (d_t.getMonth() + 1)).slice(-2);
     let day = ("0" + d_t.getDate()).slice(-2);
@@ -30,16 +30,7 @@ app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-controller(app); //register the route
-// app.use(express.static(path.join(__dirname, "../my-app/dist/")));
-// app.get("/", (req, res, next) => {
-//   console.log("hi");
-//   res.sendFile(path.join(__dirname, "../my-app/dist/index.html"));
-//     });
+controller(app); 
 app.use(function(req, res) {
   res.status(404).send({url: req.originalUrl + ' not found'})
 });
-
-
-//app.listen(port);
-//console.log("DSM RESTful API server started on:"+ port);

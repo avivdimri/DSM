@@ -64,13 +64,13 @@ exports.sortByLocation = async function(couriers,delivery){
         src  = {"lat":latLngCourier[0], "long": latLngCourier[1]}
         dest = {"lat":delivery.src.lat, "long": delivery.src.long}
         dur_dis = await get_duration(src,dest)
-        console.log("dur_dis is  " +JSON.stringify(dur_dis))
+        //console.log("dur_dis is  " +JSON.stringify(dur_dis))
         sortCouriers.push({"courier":couriers[i],"duration":dur_dis.duration,"distance":dur_dis.distance })
     }
     await sortCouriers.sort(function (a, b) {
         return a.duration.value - b.duration.value;
       });
    
-    console.log(JSON.stringify(sortCouriers))
+    //console.log(JSON.stringify(sortCouriers))
     return sortCouriers
 }

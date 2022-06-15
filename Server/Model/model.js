@@ -1,8 +1,7 @@
 //'use strict';
 const geo = require('./geoUtils'); 
 const db = require('./dbUtils')
-const con = require('./conUtils.js')
-const OneSignal = require('onesignal-node');    
+const con = require('./conUtils.js') 
 const parser = require('../csv_parser/parser');
 const { ObjectId } = require('mongodb');
 const firebase = require('./firebaseUtils');
@@ -53,7 +52,6 @@ exports.add_delivery = async function(req, res) {
     orders.forEach(async(order) =>{ 
       order.express = true
         var result= await db.addDocumentByCollection(order,ORDERS)
-        console.log("express is "+ result.express)
         if (result.express){
             await dispatch_delivery(result)
             res.send("dispatch the delivery successfully ")
@@ -99,7 +97,7 @@ exports.update_courier_info = async function(req, res) {
     phone_number : req.body.phone_number,
     //VehicleType : req.body.VehicleType,
   }
-  console.log("the new courier Info is : " +JSON.stringify(userData))
+  //console.log("the new courier Info is : " +JSON.stringify(userData))
 
   var object_id = new ObjectId(id);
   query_find = { _id: object_id}

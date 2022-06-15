@@ -7,11 +7,10 @@ const mongoClient = require('mongodb').MongoClient;
 const mongoDbUrl = 'mongodb+srv://ASDelivery:AaSs12345678@cluster0.u6dbb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 let mongodb;
 exports.getCouriersByIdCompany = async function(companyId){
-    console.log(companyId)
     query_find = { company_id: companyId,status:"idle" ,token: { $exists: true } }
     query_projection = {projection: {_id: 1,token: 1}}
     result = await db.getDocs("Couriers",query_find,query_projection)
-    console.log(JSON.stringify(result))
+    //console.log(JSON.stringify(result))
     return result
 }
 exports.addDocumentByCollection = async function createListing(document,collection_name){
