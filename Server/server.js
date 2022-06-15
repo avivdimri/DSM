@@ -2,10 +2,22 @@ const model = require('./Model/model'); //created model loading here
 const controller = require('./Controller/controller'); //importing route
 bodyParser = require('body-parser');
 const path = require('path');
+const dayjs = require('dayjs');
 db = require('./Model/dbUtils')
 firebase = require('./Model/firebaseUtils')
 db.connectDB(() => {
   app.listen(process.env.PORT || 3000, function (){
+    const d_t = new Date(2022,09,03,16);
+    console.log(d_t);
+    let year = d_t.getFullYear();
+    let month = ("0" + (d_t.getMonth() + 1)).slice(-2);
+    let day = ("0" + d_t.getDate()).slice(-2);
+    let hour = d_t.getHours();
+    let minute = "00"
+    let seconds = "00"
+    time =year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + seconds
+    // prints date & time in YYYY-MM-DD HH:MM:SS format
+    console.log(time);
       console.log("DSM RESTful API server start");
   });
 });

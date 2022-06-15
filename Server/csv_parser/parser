@@ -1,9 +1,8 @@
 const csv = require('csv-parser')
 const fs = require('fs')
 const axios = require('axios');
-const { json } = require('body-parser');
-const results = [];
-const headers = ["src/lat","src/long",'dest/lat','dest/long',"src_contact/name","src_contact/phone","dst_contact/name","dst_contact/phone","express","company_id"]
+
+const headers = ["src/lat","src/long",'dest/lat','dest/long',"src_contact/name","src_contact/phone","dst_contact/name","dst_contact/phone","express","company_id","deadline"]
 exports.parse = async function(file_name) {
     var json = await csvToJson(file_name)
     for(var i =0; i < json.length;i++){
@@ -12,20 +11,19 @@ exports.parse = async function(file_name) {
         if (!headers.includes(key))
             console.log("the field : "+key+" is not exist in headers format :" + headers)
       }
+
         lat  = order['src/lat']
         delete order['src/lat']
         long = order['src/long']
         delete order['src/long']
         order['src'] = {"lat" : lat, "long" : long}
-        var address = await convertLatLongToAddress(lat,long)
-        order['src_address'] = address
+        order['src_address'] = "HaSharon St 21, Tel Aviv-Yafo, Israel"
         lat  = order['dest/lat']
         delete order['dest/lat']
         long = order['dest/long']
         delete order['dest/long']
         order['dest'] = {"lat" : lat, "long" : long}
-        var address = await convertLatLongToAddress(lat,long)
-        order['dest_address'] = address
+        order['dest_address'] = "Hartuv St 14, Tel Aviv-Yafo, Israel"
         name_contact  = order['src_contact/name']
         delete order['src_contact/name']
         phone_contact = order['src_contact/phone']
@@ -37,7 +35,7 @@ exports.parse = async function(file_name) {
         phone_contact = order['dst_contact/phone']
         delete order['dst_contact/phone']
         order['dst_contact'] = {"name" : name_contact, "phone" : phone_contact}
-
+        order["express"] == true
         order['status'] = "pending"
         order['Vehicle_type'] = "car,van,bike,scooter"
     }
@@ -47,6 +45,7 @@ exports.parse = async function(file_name) {
 }
 
 function csvToJson(file_name){
+  var results = [];
     return new Promise((resolve, reject) => {
         fs.createReadStream(file_name)
       .pipe(csv())

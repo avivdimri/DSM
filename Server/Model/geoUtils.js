@@ -68,7 +68,7 @@ exports.sortByLocation = async function(couriers,delivery){
         sortCouriers.push({"courier":couriers[i],"duration":dur_dis.duration,"distance":dur_dis.distance })
     }
     await sortCouriers.sort(function (a, b) {
-        return a.duration - b.duration;
+        return a.duration.value - b.duration.value;
       });
    
     console.log(JSON.stringify(sortCouriers))
