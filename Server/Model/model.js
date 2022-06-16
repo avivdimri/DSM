@@ -90,22 +90,46 @@ exports.consolelog = async function(req, res) {
     var query_projection = { projection: { _id:0,company_id:1 }}
     companyIds = await db.findOne("Couriers",query_find,query_projection)
     query_find = { company_id: { $in : companyIds["company_id"]}}
-   
     result = await db.getDocs("Orders",query_find)
     console.log("the deliveries are : "+ JSON.stringify(result) )
     res.send(JSON.stringify(result))
 }
+exports.get_all_deliveries = async function(req, res) {
+  var id = req.query.id
+  var query_find = { _id: ObjectId(id)}
+  var query_projection = { projection: { _id:0,company_id:1 }}
+  companyIds = await db.findOne("Couriers",query_find,query_projection)
+  query_find = { company_id: { $in : companyIds["company_id"]}}
+  result = await db.getDocs("Orders",query_find)
+  console.log("the deliveries are : "+ JSON.stringify(result) )
+  res.send(JSON.stringify(result))
+}
 exports.update_courier_status = async function(req, res) {
     var id = req.params.userId
     var courier_status = req.body.status
-    //console.log("the id is " + id)
-   // console.log("the status is :" + courier_status)
     var object_id = new ObjectId(id);
     query_find = { _id: object_id}
     query_update = {$set: {status:courier_status}}
     result = await db.updateDoc("Couriers",query_find,query_update)
     res.send(JSON.stringify(result))
 }
+exports.update_courier_info = async function(req, res) {
+  var id = req.params.userId
+  const userData = {
+    first_name : req.body.first_name,
+    last_name : req.body.last_name,
+    phone_number : req.body.phone_number,
+    //VehicleType : req.body.VehicleType,
+  }
+  console.log("the new courier Info is : " +JSON.stringify(userData))
+
+  var object_id = new ObjectId(id);
+  query_find = { _id: object_id}
+  query_update = {$set: {first_name:req.body.first_name,last_name:req.body.last_name,phone_number:req.body.phone_number}}
+  result = await db.updateDoc("Couriers",query_find,query_update)
+  res.send(JSON.stringify(result))
+}
+
 
 exports.update_delivery_status = async function(req, res) {
     var id = req.params.deliveryId
@@ -125,9 +149,10 @@ exports.update_delivery_status = async function(req, res) {
 async function dispatch_delivery(delivery) {
     var find_courier = false
     var couriers = await findBestCouriers(delivery)
+    couriers =  await geo.sortByLocation(couriers,delivery)
     for(var i =0; i < couriers.length;i++){
         var courier = couriers[i]
-        await sendNotfication(delivery,courier.token)
+        await sendNotfication(delivery,courier.courier.token)
         await new Promise(resolve => setTimeout(resolve, 5000));
         var status = await getDeliveryStatus(delivery)
         if (status == "assigned"){
@@ -146,7 +171,8 @@ async function dispatch_delivery(delivery) {
 }
 async function sendNotfication(delivery,token) {
 
- //console.log(" the token is "+ token )
+ console.log(" the token is "+ token )
+ console.log(" the address is "+ delivery.dest_address )
   var headerNotification =
   {"headers":{
     'Content-Type': 'application/json',
@@ -155,7 +181,7 @@ async function sendNotfication(delivery,token) {
 
   var bodyNotification =
   {
-    "body":`Destination Address: \n${delivery.dest_address}.`,
+    "body":`Destination Address: \n ${delivery.dest_address}.`,
     "title":"New Delivery Request"
   };
 
@@ -217,21 +243,22 @@ async function findBestCouriers(delivery){
         var index = await firebase.getIndexLocationByCourierId(courier._id)
         if (index == null)
             continue
-            courierIndices.push({"courier": courier ,"index" :index})
+        courierIndices.push({"courier": courier ,"index" :index})
     }
     var find = false
     for(var i =0; i<3;i++){
         rings = geo.getRingFromSrc(latLong,i)
         for(var j =0; j < courierIndices.length;j++){
+           //console.log("the courier is : " + JSON.stringify(courierIndices[j].courier))
             var index = courierIndices[j].index
-            if (rings.includes(index))
+            if (rings.includes(index)){
                 find = true
                 bestCourier.push(courierIndices[j].courier)
-                break
-
+                //console.log("find courier " + JSON.stringify(courierIndices[j].courier))
+            }
         }
         if(find){
-            break
+           break
         }
 
     }

@@ -28,11 +28,16 @@ module.exports = function(app) {
 
     app.route('/a')
      .get(model.consolelog)
+    app.route('/getAllDeliveries')
+     .get(model.get_all_deliveries)
+    
     
     app.route('/courier_status/:userId')
      .put(model.update_courier_status)
-     app.route('/delivery_status/:deliveryId')
+    app.route('/delivery_status/:deliveryId')
      .put(model.update_delivery_status)
+    app.route('/updateCourierInfo/:userId')
+     .put(model.update_courier_info)
     
 
     app.route('/courier_token/:userId')
