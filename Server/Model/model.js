@@ -92,16 +92,15 @@ exports.update_courier_status = async function(req, res) {
 exports.update_courier_info = async function(req, res) {
   var id = req.params.userId
   const userData = {
-    first_name : req.body.first_name,
-    last_name : req.body.last_name,
-    phone_number : req.body.phone_number,
-    //VehicleType : req.body.VehicleType,
+    first_name : req.body.firstName,
+    last_name : req.body.lastName,
+    phone_number : req.body.phoneNumber,
+    Vehicle_type : req.body.VehicleType,
   }
-  //console.log("the new courier Info is : " +JSON.stringify(userData))
 
   var object_id = new ObjectId(id);
   query_find = { _id: object_id}
-  query_update = {$set: {first_name:req.body.first_name,last_name:req.body.last_name,phone_number:req.body.phone_number}}
+  query_update = {$set: userData}
   result = await db.updateDoc(COURIERS,query_find,query_update)
   res.send(JSON.stringify(result))
 }
@@ -201,8 +200,7 @@ async function findBestCouriers(delivery){
     var bestCourier = []
     var courierIndices = []
     latLong = delivery.src
-    allCouriers  =  await db.getCouriersByIdCompany(delivery.company_id)
-
+    allCouriers = await db.getCouriersByFilters(delivery.company_id,delivery.Vehicle_type)
     for(var i =0; i < allCouriers.length;i++){
         var courier = allCouriers[i]
         var index = await firebase.getIndexLocationByCourierId(courier._id)

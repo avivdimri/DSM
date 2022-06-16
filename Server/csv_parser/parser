@@ -37,7 +37,7 @@ exports.parse = async function(file_name) {
         order['dst_contact'] = {"name" : name_contact, "phone" : phone_contact}
         order["express"] == true
         order['status'] = "pending"
-        order['Vehicle_type'] = "car,van,bike,scooter"
+        order['Vehicle_type'] = ["van","bike","scooter","car"]
     }
 
     return json
