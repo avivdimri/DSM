@@ -1,2 +1,2 @@
-src/lat,src/long,dest/lat,dest/long,src_contact/name,src_contact/phone,dst_contact/name,dst_contact/phone,express,company_id
-32.0626,34.7790,32.048989,34.798414,Moshe,0501234567,Shir,0501234567,express,5
+src/lat,src/long,dest/lat,dest/long,src_contact/name,src_contact/phone,dst_contact/name,dst_contact/phone,express,company_id,deadline
+32.0626,34.7790,32.048989,34.798414,Moshe,0501234567,Shir,0501234567,true,6280e5046312de7332c01d89

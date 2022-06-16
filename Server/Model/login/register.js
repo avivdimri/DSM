@@ -108,7 +108,6 @@ function registerCompany(user,res){
 }
 
 function registerCourier(user,res){
-  console.log("111111")
   const userData = {
     //values should be those in the user model important
     user_name : user.user_name, 
