@@ -6,9 +6,10 @@ const DATABASE = "delivery_management"
 const mongoClient = require('mongodb').MongoClient;
 const mongoDbUrl = 'mongodb+srv://ASDelivery:AaSs12345678@cluster0.u6dbb.mongodb.net/myFirstDatabase?retryWrites=true&w=majority';
 let mongodb;
-exports.getCouriersByIdCompany = async function(companyId){
-    query_find = { company_id: companyId,status:"idle" ,token: { $exists: true } }
-    query_projection = {projection: {_id: 1,token: 1}}
+exports.getCouriersByFilters = async function(companyId,Vehicle_type){
+    console.log(" the vehoclice type array is : " +Vehicle_type)
+    query_find = { company_id: companyId,status:"idle" ,token: { $exists: true },Vehicle_type: { $in : Vehicle_type} }
+    query_projection = {projection: {_id: 1,token: 1,Vehicle_type:1}}
     result = await db.getDocs("Couriers",query_find,query_projection)
     //console.log(JSON.stringify(result))
     return result

@@ -13,7 +13,7 @@ function coordToIndex(lat,long) {
 exports.getRingFromSrc = function(coord,steps) {
     return h3.kRing(coordToIndex(coord.lat,coord.long), steps)
 }
-async function get_duration(src,dest){
+async function get_duration(src,dest,vehicle_type){
 
     var srcLatLng = src.lat+","+src.long
     var origins = [srcLatLng];
@@ -22,6 +22,9 @@ async function get_duration(src,dest){
     
     distance.key('AIzaSyCqcNNmxm-9YBysFypGjn8BUwdM3TUUegw');
     distance.mode('driving');
+    if (vehicle_type == "bike" || vehicle_type == "scooter" ){
+        distance.mode('bicycling');
+    }
     distance.units('metric');
     return new Promise((resolve, reject) => {
         distance.matrix(origins, destinations, function (err, distances) {
@@ -63,8 +66,8 @@ exports.sortByLocation = async function(couriers,delivery){
         latLngCourier = await firebase.getCouirerLocation(id)
         src  = {"lat":latLngCourier[0], "long": latLngCourier[1]}
         dest = {"lat":delivery.src.lat, "long": delivery.src.long}
-        dur_dis = await get_duration(src,dest)
-        //console.log("dur_dis is  " +JSON.stringify(dur_dis))
+        dur_dis = await get_duration(src,dest,couriers[i].Vehicle_type)
+        console.log("dur_dis is  " +JSON.stringify(dur_dis))
         sortCouriers.push({"courier":couriers[i],"duration":dur_dis.duration,"distance":dur_dis.distance })
     }
     await sortCouriers.sort(function (a, b) {
