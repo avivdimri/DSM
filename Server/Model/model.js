@@ -255,5 +255,12 @@ exports.get_courier = async function(req, res){
     var query_find = {_id: object_id}
     result = await db.findOne(COURIERS,query_find);
     console.log("get_courier function :: the Courier is : " +JSON.stringify(result) )
+    var companyIds = []
+    result.company_id.forEach((value)=> 
+    companyIds.push(new ObjectId(value)) )
+    query_find = { _id: { $in : companyIds}}
+    var query_projection = { projection: { _id:0,company_name:1 }}
+    res =await  db.findOne("Companies",query_find,query_projection)
+    result.company_name = res.company_name;
     res.send(JSON.stringify(result))
 }

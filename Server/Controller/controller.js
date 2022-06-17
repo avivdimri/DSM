@@ -17,12 +17,7 @@ module.exports = function(app) {
         .delete(model.deleteC)
     app.route('/api/login_courier')
         .post(login.login_courier)
-    
-    /*app.route('/sign_up_courier')
-        .post(model.sign_up_courier)
-    app.route('/sign_in_courier')
-        .post(model.sign_in_courier)*/
-      
+        
     app.route('/companyID/deliveries')
         .post(model.add_delivery)
 
