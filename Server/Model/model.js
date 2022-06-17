@@ -260,7 +260,7 @@ exports.get_courier = async function(req, res){
     companyIds.push(new ObjectId(value)) )
     query_find = { _id: { $in : companyIds}}
     var query_projection = { projection: { _id:0,company_name:1 }}
-    res =await  db.findOne("Companies",query_find,query_projection)
-    result.company_name = res.company_name;
+    result2 =await  db.findOne("Companies",query_find,query_projection)
+    result.company_name = result2.company_name;
     res.send(JSON.stringify(result))
 }
