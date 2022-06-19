@@ -1,60 +1,56 @@
-const csv = require('csv-parser')
-const fs = require('fs')
 const axios = require('axios');
 
-const headers = ["src/lat","src/long",'dest/lat','dest/long',"src_contact/name","src_contact/phone","dst_contact/name","dst_contact/phone","express","company_id","deadline"]
-exports.parse = async function(file_name) {
-    var json = await csvToJson(file_name)
-    for(var i =0; i < json.length;i++){
-      var order = json[i]
-      for(let key of Object.keys(order)){
-        if (!headers.includes(key))
-            console.log("the field : "+key+" is not exist in headers format :" + headers)
-      }
+exports.csvFileToJson= async function(file,company_id){
 
-        lat  = order['src/lat']
-        delete order['src/lat']
-        long = order['src/long']
-        delete order['src/long']
-        order['src'] = {"lat" : lat, "long" : long}
-        order['src_address'] = "HaSharon St 21, Tel Aviv-Yafo, Israel"
-        lat  = order['dest/lat']
-        delete order['dest/lat']
-        long = order['dest/long']
-        delete order['dest/long']
-        order['dest'] = {"lat" : lat, "long" : long}
-        order['dest_address'] = "Hartuv St 14, Tel Aviv-Yafo, Israel"
-        name_contact  = order['src_contact/name']
-        delete order['src_contact/name']
-        phone_contact = order['src_contact/phone']
-        delete order['src_contact/phone']
-        order['src_contact'] = {"name" : name_contact, "phone" : phone_contact}
-        
-        name_contact  = order['dst_contact/name']
-        delete order['dst_contact/name']
-        phone_contact = order['dst_contact/phone']
-        delete order['dst_contact/phone']
-        order['dst_contact'] = {"name" : name_contact, "phone" : phone_contact}
-        order["express"] == true
-        order['status'] = "pending"
-        order['Vehicle_type'] = ["van","bike","scooter","car"]
+  const expeced_headers = ['src_address', 'dest_address', 'src_contact_name', 'src_contact_phone',  'dst_contact_name', 'dst_contact_phone',  'deadline', 'Vehicle_type']
+
+  let stringfile = file.slice(1);
+  const orders = stringfile.split("\n");
+
+  /* Store the CSV column headers into seprate variable */
+  const my_headers = orders[0].split('\r')[0].split(",")
+
+  /*check the if header include all columns */
+  if(my_headers.length != 8){
+    console.log("file error")
+  } 
+  
+  for (let index = 0; index < expeced_headers.length; index++) {
+    if(my_headers[index]!= expeced_headers[index]){
+      console.log("file error");
     }
+    
+  }
+  const allOrders = [];
+  for (let i = 1; i < orders.length; i++) {
+    var orderObject = {}
+    //split order 5to 8 cells
+    const current_order = orders[i].split('\r')[0].split(",");
 
-    return json
-
+    orderObject['src_address']=current_order[0];
+    orderObject['dest_address']=current_order[1];
+    orderObject['src_contact'] = {
+      name:current_order[2],
+      phone:current_order[3],
+    }
+    orderObject['dst_contact'] = {
+      name:current_order[4],
+      phone:current_order[5],
+    }
+    orderObject['deadline'] = current_order[6]
+    const vehicleArray = current_order[7].split('/');
+    orderObject['Vehicle_type'] = vehicleArray;
+    orderObject['express'] = false;
+    orderObject['status'] = 'pending';
+    orderObject['company_id'] = company_id;
+    orderObject['src'] = await convertAddressToLatLong(current_order[0])
+    orderObject['dest'] = await convertAddressToLatLong(current_order[1])
+    allOrders[i-1]=orderObject;
+    console.log(orderObject);
+  }
+  return allOrders;
 }
 
-function csvToJson(file_name){
-  var results = [];
-    return new Promise((resolve, reject) => {
-        fs.createReadStream(file_name)
-      .pipe(csv())
-      .on('data', (data) => results.push(data))
-      .on('end', () => {
-        resolve(results)
-        });
-        })
-}
 async function convertLatLongToAddress(lat, long){
   url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=AIzaSyCqcNNmxm-9YBysFypGjn8BUwdM3TUUegw`
   try {
@@ -66,4 +62,23 @@ async function convertLatLongToAddress(lat, long){
     console.log(error.response);
   }
 
+}
+async function convertAddressToLatLong (location){
+  console.log(location)
+  url = 'https://maps.googleapis.com/maps/api/geocode/json';//adderss=${adderss}&key=AIzaSyCqcNNmxm-9YBysFypGjn8BUwdM3TUUegw`
+  try{
+    const response = await axios.get(url,{
+      params:{
+        address:location,
+        key:'AIzaSyCqcNNmxm-9YBysFypGjn8BUwdM3TUUegw'
+      }
+    })
+    var lat = response.data.results[0].geometry.location.lat;
+    var lng = response.data.results[0].geometry.location.lng;
+    return {'lat':lat.toString(),
+    'long':lng.toString()
+    }
+  }catch (error) {
+    console.log(error);
+  }
 }
