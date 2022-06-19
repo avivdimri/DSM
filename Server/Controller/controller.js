@@ -55,5 +55,5 @@ module.exports = function(app) {
     .get(model.get_order)
     app.route('/get_courier/:courierId')
     .get(model.get_courier)
-         
+   
 };
