@@ -174,6 +174,20 @@ exports.update_delivery_info = async function(req, res) {
     res.json( {status:'ERROR', message:'error1:' + err})
   })
 }
+exports.update_company_info = async function(req, res) {
+  var id = req.body.params.id
+  var object_id = new ObjectId(id);
+  query_find = { _id: object_id}
+  result = await db.updateDocument("Companies",query_find,req.body.params.update).then(user => {
+    //after successfully 
+    console.log(user)
+    res.json( {status:'SUCCESS',message:'profile inforamtion update succsessfully',user:user})
+  })
+  .catch(err => {
+    //if an error occured go ahead and display the error
+    res.json( {status:'ERROR', message:'error1:' + err})
+  })
+}
 exports.update_courier_info = async function(req, res) {
   var id = req.params.userId
   const userData = {

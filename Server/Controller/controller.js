@@ -45,6 +45,9 @@ module.exports = function(app) {
      .put(model.update_delivery_status)
     app.route('/api/update_order')
      .put(model.update_delivery_info)
+     app.route('/api/update_company')
+     .put(model.update_company_info)
+     
     app.route('/updateCourierInfo/:userId')
      .put(model.update_courier_info)
 
