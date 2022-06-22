@@ -1,25 +1,17 @@
-//'use strict';
+
 const geo = require('./geoUtils'); 
 const db = require('./dbUtils')
 const con = require('./conUtils.js')
 const parser = require('../csv_parser/parser');
 const { ObjectId } = require('mongodb');
-const firebase = require('./firebaseUtils');
-const axios = require('axios');
-const { response } = require('express');
-const multiparty = require('multiparty');
-const fs = require('fs')
-const COURIERS = "Couriers"
-const ORDERS = "Orders"
+const consts = require('../consts');
 
-// exports.sign_up_company = function(req, res) {
-//     db.addDocumentByCollection(req.body,"Companies")
-//     res.send("created new company successfully your id is")
-//     };
+
+
 exports.addCourier = async function(req, res) {
     const user_name=req.body.user_name;
     const company_id = req.body.company_id;
-    db.findOne(COURIERS,{
+    db.findOne(consts.COURIERS,{
         //ensure username is unique, i.e the username is not already in the database
         user_name:user_name
       })
@@ -27,35 +19,35 @@ exports.addCourier = async function(req, res) {
           //if the username is unique 
           if (!user) {
             //if the username is unique go ahead and create userData after hashing password and salt
-            db.addDocumentByCollection(req.body,COURIERS)
+            db.addDocumentByCollection(req.body,consts.COURIERS)
                 .then(user => {
                   //after successfully creating userData display registered message
-                  res.json( {status:'SUCCESS',message:'The register of user complete!'})
+                  res.json( {status:consts.SUCCESS,message:'The register of user complete!'})
                 })
                 .catch(err => {
                   //if an error occured while trying to create userData, go ahead and display the error
-                  res.json( {status:'ERROR', message:'error1:' + err})
+                  res.json( {status:consts.ERROR, message:'error1:' + err})
                 })
           } else {
-            db.pushToArray(COURIERS,{user_name:user_name},{ company_id: company_id  })
+            db.pushToArray(consts.COURIERS,{user_name:user_name},{ company_id: company_id  })
             .then(user => {
                 //after successfully creating userData display registered message
-                res.json( {status:'SUCCESS',message:'The register of user complete!'})
+                res.json( {status:consts.SUCCESS,message:'The register of user complete!'})
               })
               .catch(err => {
                 //if an error occured while trying to create userData, go ahead and display the error
-                res.json( {status:'ERROR', message:'error1:' + err})
+                res.json( {status:consts.ERROR, message:'error1:' + err})
               })
           }
         })
         .catch(err => {
           //display error if an error occured
-          res.json({status:'ERROR',message:'error2:' + err})
+          res.json({status:consts.ERROR,message:'error2:' + err})
         })
       }
     //res.send("created new courier successfully ")
 exports.sign_up_courier = function(req, res) {
-    db.addDocumentByCollection(req.body,"Couriers")
+    db.addDocumentByCollection(req.body,consts.COURIERS)
     res.send("created new courier successfully ")
     };  
 exports.sign_in_courier = function(req, res) {
@@ -66,30 +58,19 @@ exports.add_delivery = async function(req, res) {
     orders = req.files.file
     company_id = req.body.company;
     allOrders =await parser.csvFileToJson(orders.data.toString(),company_id);
-    db.addManyDocumentsByCollection(allOrders,"Orders").then(result => {
+    db.addManyDocumentsByCollection(allOrders,consts.ORDERS).then(result => {
       //after successfully creating userData display registered message
-      res.json( {status:'SUCCESS',message:'The Addition complete!'})
+      res.json( {status:consts.SUCCESS,message:'The Addition complete!'})
     })
     .catch(err => {
       //if an error occured while trying to create userData, go ahead and display the error
-      res.json( {status:'ERROR', message:'error1:' + err})
+      res.json( {status:consts.ERROR, message:'error1:' + err})
     })
-    // orders = await parser.parse(orders.data)
-    
-    // orders.forEach(async(order) =>{ 
-    //     var result= await db.addDocumentByCollection(order,"Orders")
-    //     if (result.express == "express"){
-    //         await dispatch_delivery(result)
-    //         res.send("dispatch the delivery successfully ")
-    //     } else  {
-    //         res.send("add the delivery to feed successfully ")
-    //     }
-    // });
   }
     exports.add_order = async function(req, res) {
       var order = req.body
       try{
-        var result = await db.addDocumentByCollection(order,"Orders")
+        var result = await db.addDocumentByCollection(order,consts.ORDERS)
         if (result.express){
           var courier_ststus = await dispatch_delivery(result)
           if (courier_ststus != 'SUCCSESS') {
@@ -98,14 +79,14 @@ exports.add_delivery = async function(req, res) {
         }
         res.json( {status:'SUCCSESS',message:'the order added successfuly'})
       }catch(err){
-        res.json( {status:'ERROR', message:'error1:' + err})
+        res.json( {status:consts.ERROR, message:'error1:' + err})
       }
 };
 exports.findCourier = async function(req, res) {
-  res.send(await db.getDocs(COURIERS,JSON.parse(req.query.params)));
+  res.send(await db.getDocs(consts.COURIERS,JSON.parse(req.query.params)));
 };
 exports.findCourierById = async function(req, res) {
-  await db.getDocById("Couriers",JSON.parse(req.query.params)._id).then(response =>{
+  await db.getDocById(consts.COURIERS,JSON.parse(req.query.params)._id).then(response =>{
     if(response){
       res.json({data:response,msg:"success"})
     }else{
@@ -115,10 +96,10 @@ exports.findCourierById = async function(req, res) {
 };
 
 exports.findOrders = async function(req, res) {
-  res.send(await db.getDocs("Orders",JSON.parse(req.query.params)));
+  res.send(await db.getDocs(consts.ORDERS,JSON.parse(req.query.params)));
 };
 exports.findOrderById = async function(req, res) {
-  res.send(await db.getDoc("Orders",{"_id": ObjectId(`${req.query._id}`)}));
+  res.send(await db.getDoc(consts.ORDERS,{"_id": ObjectId(`${req.query._id}`)}));
 };  
 
 exports.deleteC = async function(req, res) {
@@ -132,46 +113,34 @@ exports.get_all_deliveries = async function(req, res) {
   var id = req.query.id
   var query_find = { _id: ObjectId(id)}
   var query_projection = { projection: { _id:0,company_id:1 }}
-  companyIds = await db.findOne(COURIERS,query_find,query_projection)
+  var companyIds = await db.findOne(consts.COURIERS,query_find,query_projection)
   query_find = { company_id: { $in : companyIds["company_id"]}}
-  result = await db.getDocs(ORDERS,query_find)
+  var result = await db.getDocs(consts.ORDERS,query_find)
   //console.log("the deliveries sent : "+ JSON.stringify(result) )
   console.log("the deliveries sent successfuly")
   res.send(JSON.stringify(result))
 }
-exports.consolelog = async function(req, res) {
-    var id = req.query.id
-    var query_find = { _id: ObjectId(id)}
-    var query_projection = { projection: { _id:0,company_id:1 }}
-    companyIds = await db.findOne("Couriers",query_find,query_projection)
-    query_find = { company_id: { $in : companyIds["company_id"]}}
-   
-    result = await db.getDocs("Orders",query_find)
-    console.log("the deliveries are : "+ JSON.stringify(result) )
-    res.send(JSON.stringify(result))
-}
+
 exports.update_courier_status = async function(req, res) {
     var id = req.params.userId
     var courier_status = req.body.status
-    //console.log("the id is " + id)
-   // console.log("the status is :" + courier_status)
     var object_id = new ObjectId(id);
-    query_find = { _id: object_id}
-    query_update = {$set: {status:courier_status}}
-    result = await db.updateDoc(COURIERS,query_find,query_update)
+    var query_find = { _id: object_id}
+    var query_update = {$set: {status:courier_status}}
+    var result = await db.updateDoc(consts.COURIERS,query_find,query_update)
     res.send(JSON.stringify(result))
 }
 exports.update_delivery_info = async function(req, res) {
   var id = req.body.params.id
   var object_id = new ObjectId(id);
-  query_find = { _id: object_id}
-  result = await db.updateDocument("Orders",query_find,req.body.params.update).then(user => {
+  var query_find = { _id: object_id}
+  var result = await db.updateDocument(consts.ORDERS,query_find,req.body.params.update).then(user => {
     //after successfully 
-    res.json( {status:'SUCCESS'})
+    res.json( {status:consts.SUCCESS})
   })
   .catch(err => {
     //if an error occured go ahead and display the error
-    res.json( {status:'ERROR', message:'error1:' + err})
+    res.json( {status:consts.ERROR, message:'error1:' + err})
   })
 }
 exports.update_courier_info = async function(req, res) {
@@ -184,36 +153,35 @@ exports.update_courier_info = async function(req, res) {
   }
 
   var object_id = new ObjectId(id);
-  query_find = { _id: object_id}
-  query_update = {$set: userData}
-  result = await db.updateDoc(COURIERS,query_find,query_update)
+  var query_find = { _id: object_id}
+  var query_update = {$set: userData}
+  var result = await db.updateDoc(consts.COURIERS,query_find,query_update)
   res.send(JSON.stringify(result))
 }
 
 
 exports.update_delivery_status = async function(req, res) {
-  var deliveryId = req.params.deliveryId
-  var delivery_status = req.body.status
-  var courierId = req.body.courier_id
-  console.log("the status is :" + delivery_status)
-  console.log("the courier id is :" + courierId)
-  var object_deliveryId = new ObjectId(deliveryId);
-  query_find = { _id: object_deliveryId}
-  query_update = {$set: {status:delivery_status,courier_id:courierId}}
-  result = await db.updateDoc(ORDERS,query_find,query_update)
+  //console.log("the status is :" + delivery_status)
+  //console.log("the courier id is :" + courierId)
+  var object_deliveryId = new ObjectId(req.params.deliveryId);
+  var query_find = { _id: object_deliveryId}
+  var query_update = {$set: {status:req.body.status,courier_id:req.body.courier_id}}
+  var result = await db.updateDoc(consts.ORDERS,query_find,query_update)
   res.send(JSON.stringify(result))
 }
 
 
 async function dispatch_delivery(delivery) {
   var find_courier = false
-  var couriers = await findBestCouriers(delivery)
-  couriers =  await geo.sortByLocation(couriers,delivery)
+  var couriers = await geo.findBestCouriers(delivery) // filter the rellevent couriers
+  couriers =  await geo.sortByLocation(couriers,delivery) // sort the couriers by duration
+
+  // send notfication by order until courier accept
   for(var i =0; i < couriers.length;i++){
       var courier = couriers[i]
-      await sendNotification(delivery,courier.courier.token)
-      await new Promise(resolve => setTimeout(resolve, 12000));
-      var status = await getDeliveryStatus(delivery)
+      await con.sendNotification(delivery,courier.courier.token) //send notfication
+      await new Promise(resolve => setTimeout(resolve, 12000)); // wait to answer
+      var status = await getDeliveryStatus(delivery) // check if courier accept/decline
       if (status != "pending"){
           find_courier=true 
           console.log("find courier")
@@ -229,60 +197,18 @@ async function dispatch_delivery(delivery) {
   return "SUCCSESS"
         
 }
-async function sendNotification(delivery,token) {
-  console.log(" the token is "+ token )
- 
-   var headerNotification =
-   {"headers":{
-     'Content-Type': 'application/json',
-     'Authorization': 'key=AAAA0lbMz8I:APA91bG36p30LIkNBSnHF5SAxa_G5aNIwFdlMihdzkBpxJScKuNYsxeIjf_YQu4P6fzj36FnoGkU6W39DsaCpwwJQmX0w01DFePzIjPuMcFI9m5EGZ7Efq-K-6TRZx7RCqs4Jgq6VIBg',
-   }};
- 
-   var bodyNotification =
-   {
-     "body":`Destination Address: \n ${delivery.dest_address}.`,
-     "title":"New Delivery Request"
-   };
-     var data = 
-     {
-       "click_action": "FLUTTER_NOTIFICATION_CLICK",
-       "id": "1",
-       "status": "done",
-       "deliveryId": delivery._id,
-     };
-  
-  
-   const officialNotificationFormat =
-   {
-     "notification": bodyNotification,
-     "data": data,
-     "priority": "high",
-     "to": token,
-   };
- 
- 
-   try {
-     const response = await axios.post('https://fcm.googleapis.com/fcm/send', officialNotificationFormat,headerNotification)
-     //console.log(response.data);
-  
-     //return results
-   } catch (error) {
-     console.log(error.response);
-   }
- 
-           
- }
+
 
  async function getDeliveryStatus(delivery) {
   var object_id = new ObjectId(delivery._id)
-  query_find = { _id: object_id}
-  query_projection = {_id:0,status:1}
-  result = await db.findOne(ORDERS,query_find,query_projection)
+  var query_find = { _id: object_id}
+  var query_projection = {_id:0,status:1}
+  var result = await db.findOne(consts.ORDERS,query_find,query_projection)
   console.log("get delivery function: result: " + result.status)
   return result.status
 }
 
-async function findBestCouriers(delivery){
+/*async function findBestCouriers(delivery){
     var bestCourier = []
     var courierIndices = []
     latLong = delivery.src
@@ -314,7 +240,7 @@ async function findBestCouriers(delivery){
     console.log("finish findBestBourier function: " + JSON.stringify(bestCourier))
     return bestCourier
     
-};
+};*/
 exports.add_courier_token = async function(req, res) {
     var id = req.params.userId
     var courier_token = req.body.token
@@ -323,7 +249,7 @@ exports.add_courier_token = async function(req, res) {
     var object_id = new ObjectId(id);
     var query_find = { _id: object_id}
     var query_update = {$set: {token:courier_token}}
-    result = await db.updateDoc(COURIERS,query_find,query_update)
+    result = await db.updateDoc(consts.COURIERS,query_find,query_update)
     res.send(JSON.stringify(result))
 }
 
@@ -331,7 +257,7 @@ exports.get_order = async function(req, res){
   var order_id = req.params.orderId
   var object_id = new ObjectId(order_id)
   var query_find = {_id: object_id}
-  result = await db.findOne(ORDERS,query_find);
+  var result = await db.findOne(consts.ORDERS,query_find);
   console.log("get order function :: the order is : " +JSON.stringify(result) )
   res.send(JSON.stringify(result))
 }
@@ -340,14 +266,14 @@ exports.get_courier = async function(req, res){
     var courier_id = req.params.courierId
     var object_id = new ObjectId(courier_id)
     var query_find = {_id: object_id}
-    var result = await db.findOne(COURIERS,query_find);
+    var result = await db.findOne(consts.COURIERS,query_find);
     console.log("get_courier function :: the Courier is : " +JSON.stringify(result) )
     var companyIds = []
     result.company_id.forEach((value)=> 
     companyIds.push(new ObjectId(value)) )
     query_find = { _id: { $in : companyIds}}
     var query_projection = { projection: { _id:0,company_name:1 }}
-    var result2 =await  db.getDocs("Companies",query_find,query_projection)
+    var result2 =await  db.getDocs(consts.COMAPNIES,query_find,query_projection)
     var comapnyNames = []
     result2.forEach((value)=> comapnyNames.push(value.company_name))
     result.company_name = comapnyNames;

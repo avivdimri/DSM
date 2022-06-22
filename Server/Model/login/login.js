@@ -2,13 +2,13 @@
 const crypto = require('crypto')
 //import user model
 var db = require('../dbUtils');
-// Creating salt for all users
-let salt = 'f844b09ff50c'
+const consts = require('../../consts');
+
 exports.login = function (req,res){
-   db.findOne("Companies",{
+   db.findOne(consts.COMAPNIES,{
        //check to see if a username and password match like this is in the database
        user_name: req.body.user_name,
-       password: crypto.pbkdf2Sync(req.body.password, salt,  
+       password: crypto.pbkdf2Sync(req.body.password, consts.SALT,  
          1000, 64, `sha512`).toString(`hex`)
      })
        .then(user => {
@@ -29,10 +29,10 @@ exports.login = function (req,res){
 }
 exports.login_courier = function (req,res)
 {
-  db.findOne("Couriers",{
+  db.findOne(consts.COURIERS,{
       //check to see if a username and password match like this is in the database
       user_name: req.body.user_name,
-      password: crypto.pbkdf2Sync(req.body.password, salt,  
+      password: crypto.pbkdf2Sync(req.body.password, consts.SALT,  
         1000, 64, `sha512`).toString(`hex`)
     })
       .then(user => {

@@ -2,13 +2,13 @@
 const crypto = require('crypto')
 //import user model
 var db = require('../dbUtils');
-// Creating salt for all users
-let salt = 'f844b09ff50c'
+const consts = require('../../consts');
+
 
 exports.register= function(req, res){
   let collection = getUserType(req.body);
   switch (collection) {
-    case "Companies":
+    case consts.COMAPNIES:
       registerCompany(req.body,res);
       break;
   
@@ -20,51 +20,10 @@ exports.register= function(req, res){
 
 function getUserType(user){
   if(user.company_name){
-    return "Companies"
+    return consts.COMAPNIES
   }
-  return "Couriers"
+  return consts.COURIERS
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 function registerCompany(user,res){
@@ -75,18 +34,18 @@ function registerCompany(user,res){
     password: user.password,
     company_name: user.company_name
   }
-  db.findOne("Companies",{
+  db.findOne(consts.COMAPNIES,{
     //ensure username is unique, i.e the username is not already in the database
     user_name:userData.user_name
   })
     .then(user => {
       //if the username is unique 
       if (!user) {
-        let hash = crypto.pbkdf2Sync(userData.password, salt,  
+        let hash = crypto.pbkdf2Sync(userData.password, consts.SALT,  
         1000, 64, `sha512`).toString(`hex`);
         userData.password = hash
         //if the username is unique go ahead and create userData after hashing password and salt
-        db.addDocumentByCollection(userData,"Companies")
+        db.addDocumentByCollection(userData,consts.COMAPNIES)
             .then(user => {
               //after successfully creating userData display registered message
               res.json( {user:user,
@@ -118,7 +77,7 @@ function registerCourier(user,res){
     VehicleType : user.VehicleType,
     status     : user.status,
   }
-  db.findOne("Couriers",{
+  db.findOne(consts.COURIERS,{
     //ensure username is unique, i.e the username is not already in the database
     user_name:userData.user_name
   })
@@ -131,12 +90,12 @@ function registerCourier(user,res){
           res.send('user already in use');
 
         }else{
-          let hash = crypto.pbkdf2Sync(userData.password, salt,  
+          let hash = crypto.pbkdf2Sync(userData.password, consts.SALT,  
             1000, 64, `sha512`).toString(`hex`);
             userData.password = hash
             console.log(userData.VehicleType)
             //if the username is unique go ahead and create userData after hashing password and salt
-            db.updateDocument("Couriers",user,userData)
+            db.updateDocument(consts.COURIERS,user,userData)
                 .then(user => {
                   //after successfully creating userData display registered message
                   res.send('The registerion of user is completed successfuly!');

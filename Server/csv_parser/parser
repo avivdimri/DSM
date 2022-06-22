@@ -1,5 +1,7 @@
 const axios = require('axios');
 
+
+// parse the csv file to json for effiecnt add documents to DB
 exports.csvFileToJson= async function(file,company_id){
 
   const expeced_headers = ['src_address', 'dest_address', 'src_contact_name', 'src_contact_phone',  'dst_contact_name', 'dst_contact_phone',  'deadline', 'Vehicle_type']
@@ -51,18 +53,6 @@ exports.csvFileToJson= async function(file,company_id){
   return allOrders;
 }
 
-async function convertLatLongToAddress(lat, long){
-  url = `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${long}&key=AIzaSyCqcNNmxm-9YBysFypGjn8BUwdM3TUUegw`
-  try {
-    const response = await axios.get(url)
-    //console.log(response.data);
-    var results = response.data["results"][0]["formatted_address"]
-    return results
-  } catch (error) {
-    console.log(error.response);
-  }
-
-}
 async function convertAddressToLatLong (location){
   console.log(location)
   url = 'https://maps.googleapis.com/maps/api/geocode/json';//adderss=${adderss}&key=AIzaSyCqcNNmxm-9YBysFypGjn8BUwdM3TUUegw`
