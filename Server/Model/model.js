@@ -11,6 +11,8 @@ const consts = require('../consts');
 exports.addCourier = async function(req, res) {
     const user_name=req.body.user_name;
     const company_id = req.body.company_id;
+    req.body.company_id = [company_id];
+    console.log(" the body is: " + JSON.stringify(req.body))
     db.findOne(consts.COURIERS,{
         //ensure username is unique, i.e the username is not already in the database
         user_name:user_name
@@ -75,6 +77,7 @@ exports.add_delivery = async function(req, res) {
           var courier_ststus = await dispatch_delivery(result)
           if (courier_ststus != 'SUCCSESS') {
             res.json( {status:'FAILURE',message:courier_ststus})
+            return 
           }
         }
         res.json( {status:'SUCCSESS',message:'the order added successfuly'})
@@ -161,8 +164,11 @@ exports.update_courier_info = async function(req, res) {
 
 
 exports.update_delivery_status = async function(req, res) {
-  //console.log("the status is :" + delivery_status)
-  //console.log("the courier id is :" + courierId)
+  var status = await getDeliveryStatus(req.params.deliveryId);
+  if (status != "pending"){
+    res.send(consts.ERROR)
+    return
+  }
   var object_deliveryId = new ObjectId(req.params.deliveryId);
   var query_find = { _id: object_deliveryId}
   var query_update = {$set: {status:req.body.status,courier_id:req.body.courier_id}}
@@ -173,25 +179,42 @@ exports.update_delivery_status = async function(req, res) {
 
 async function dispatch_delivery(delivery) {
   var find_courier = false
-  var couriers = await geo.findBestCouriers(delivery) // filter the rellevent couriers
-  couriers =  await geo.sortByLocation(couriers,delivery) // sort the couriers by duration
+  var alreadySent = []
+  for(var ring =0; ring<6;ring++){
+    var courierIndices = await geo.findCouriersWithIndex(delivery,alreadySent) // filter the rellevent couriers
+    var rings = await geo.getRingFromSrc(delivery.src,ring)
+    var bestCouriers = await geo.findCouriersInRings(courierIndices,rings)
+    if (bestCouriers.length > 0){
+        console.log(" find courier in ring number : " + ring)
+    }
+    var couriers =  await geo.sortByLocation(bestCouriers,delivery) // sort the couriers by duration
+ 
+    // send notfication by order until courier accept
+    for(var i =0; i < couriers.length;i++){
+        var cou = couriers[i]
+        await con.sendNotification(delivery,cou.courier.token) //send notfication
+        alreadySent.push(cou.courier._id.toString())
+        await new Promise(resolve => setTimeout(resolve, 12000)); // wait to answer
+        var status = await getDeliveryStatus(delivery._id) // check if courier accept/decline
+        if (status != "pending"){
+            find_courier=true 
+            console.log("find courier")
+            break
+        }
+        else{
+          console.log("the courier decline the request try next courier...")
+        }
+    }
+    if (find_courier){
+      break
+    }
 
-  // send notfication by order until courier accept
-  for(var i =0; i < couriers.length;i++){
-      var courier = couriers[i]
-      await con.sendNotification(delivery,courier.courier.token) //send notfication
-      await new Promise(resolve => setTimeout(resolve, 12000)); // wait to answer
-      var status = await getDeliveryStatus(delivery) // check if courier accept/decline
-      if (status != "pending"){
-          find_courier=true 
-          console.log("find courier")
-          break
-      }
-      else{
-        console.log("the courier decline the request try next courier...")
-      }
   }
   if (!find_courier){
+    var object_deliveryId = new ObjectId(delivery._id);
+    var query_find = { _id: object_deliveryId}
+    var query_update = {$set: {status:"issue"}}
+    var result = await db.updateDoc(consts.ORDERS,query_find,query_update)
     return "sorry, couldn't find courier for the delivery request"
   }
   return "SUCCSESS"
@@ -199,8 +222,8 @@ async function dispatch_delivery(delivery) {
 }
 
 
- async function getDeliveryStatus(delivery) {
-  var object_id = new ObjectId(delivery._id)
+ async function getDeliveryStatus(deliveryId) {
+  var object_id = new ObjectId(deliveryId)
   var query_find = { _id: object_id}
   var query_projection = {_id:0,status:1}
   var result = await db.findOne(consts.ORDERS,query_find,query_projection)

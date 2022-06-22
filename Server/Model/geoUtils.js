@@ -6,39 +6,36 @@ const consts = require('../consts')
 function coordToIndex(lat,long) {
     return h3.geoToH3(lat, long, 7);
 }
-function getRingFromSrc(coord,steps) {
+exports.getRingFromSrc= async function(coord,steps) {
     return h3.kRing(coordToIndex(coord.lat,coord.long), steps)
 }
-exports.findBestCouriers = async function(delivery){
-    var bestCourier = []
+exports.findCouriersWithIndex = async function(delivery,alreadySent=[]){
     var courierIndices = []
-    var latLong = delivery.src
     var allCouriers = await db.getCouriersByFilters(delivery.company_id,delivery.Vehicle_type)
     for(var i =0; i < allCouriers.length;i++){
         var courier = allCouriers[i]
+        if (alreadySent.includes(courier._id.toString())){
+            console.log("11111111    already sent courier  " + courier._id);
+            continue;
+        }
         var index = await firebase.getIndexLocationByCourierId(courier._id)
         if (index == null){
             continue
         }
         courierIndices.push({"courier": courier ,"index" :index})
-    }
-    var find = false
-    for(var i =0; i<3;i++){
-        var rings = getRingFromSrc(latLong,i)
-        for(var j =0; j < courierIndices.length;j++){
-          //console.log("the courier is : " + JSON.stringify(courierIndices[j].courier))
-           if (rings.includes(courierIndices[j].index)){
+    } 
+    return courierIndices
+}
+exports.findCouriersInRings = async function(courierIndices,rings=[]){
+    var bestCourier = []
+    for(var j =0; j < courierIndices.length;j++){
+        var index = courierIndices[j].index
+        if (rings.includes(index)){
                find = true
                bestCourier.push(courierIndices[j].courier)
-               //console.log("find courier " + JSON.stringify(courierIndices[j].courier))
-           }
-       }
-        if(find){
-            break
-        }
 
+           }
     }
-    console.log("finish findBestBourier function: " + JSON.stringify(bestCourier))
     return bestCourier
     
 };

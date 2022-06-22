@@ -74,7 +74,7 @@ function registerCourier(user,res){
     first_name : user.first_name,
     last_name : user.last_name,
     phone_number : user.phone_number,
-    VehicleType : user.VehicleType,
+    Vehicle_type : user.Vehicle_type,
     status     : user.status,
   }
   db.findOne(consts.COURIERS,{
