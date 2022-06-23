@@ -69,7 +69,7 @@ function registerCompany(user,res){
 function registerCourier(user,res){
   const userData = {
     //values should be those in the user model important
-    user_name : user.user_name, 
+    user_name : user.user_name.toLowerCase(), 
     password: user.password,
     first_name : user.first_name,
     last_name : user.last_name,

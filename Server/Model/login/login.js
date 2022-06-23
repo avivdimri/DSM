@@ -7,7 +7,7 @@ const consts = require('../../consts');
 exports.login = function (req,res){
    db.findOne(consts.COMAPNIES,{
        //check to see if a username and password match like this is in the database
-       user_name: req.body.user_name,
+       user_name: req.body.user_name.toLowerCase(),
        password: crypto.pbkdf2Sync(req.body.password, consts.SALT,  
          1000, 64, `sha512`).toString(`hex`)
      })
@@ -31,7 +31,7 @@ exports.login_courier = function (req,res)
 {
   db.findOne(consts.COURIERS,{
       //check to see if a username and password match like this is in the database
-      user_name: req.body.user_name,
+      user_name: req.body.user_name.toLowerCase(),
       password: crypto.pbkdf2Sync(req.body.password, consts.SALT,  
         1000, 64, `sha512`).toString(`hex`)
     })

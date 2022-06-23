@@ -9,7 +9,8 @@ const consts = require('../consts');
 
 
 exports.addCourier = async function(req, res) {
-    const user_name=req.body.user_name;
+    req.body.user_name = req.body.user_name.toLowerCase()
+    const user_name=req.body.user_name
     const company_id = req.body.company_id;
     req.body.company_id = [company_id];
     console.log(" the body is: " + JSON.stringify(req.body))
