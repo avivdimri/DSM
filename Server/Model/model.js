@@ -48,14 +48,7 @@ exports.addCourier = async function(req, res) {
         })
       }
     //res.send("created new courier successfully ")
-exports.sign_up_courier = function(req, res) {
-    db.addDocumentByCollection(req.body,consts.COURIERS)
-    res.send("created new courier successfully ")
-    };  
-exports.sign_in_courier = function(req, res) {
-    console.log(req.body)
-    res.send("625eebdb30461ad917b11c66")
-    };   
+ 
 exports.add_delivery = async function(req, res) {
     orders = req.files.file
     company_id = req.body.company;
@@ -74,13 +67,11 @@ exports.add_delivery = async function(req, res) {
       try{
         var result = await db.addDocumentByCollection(order,consts.ORDERS)
         if (result.express){
+          res.json( {status:consts.SUCCESS,message:'the order added successfuly, looking for the best courier'})
           var courier_ststus = await dispatch_delivery(result)
-          if (courier_ststus != consts.SUCCESS) {
-            res.json( {status:'FAILURE',message:courier_ststus})
-            return 
-          }
         }
-        res.json( {status:consts.SUCCESS,message:'the order added successfuly'})
+        else{ res.json( {status:consts.SUCCESS,message:'the order added successfuly'})}
+       
       }catch(err){
         res.json( {status:consts.ERROR, message:'error1:' + err})
       }
@@ -178,10 +169,12 @@ exports.update_courier_info = async function(req, res) {
 
 
 exports.update_delivery_status = async function(req, res) {
-  var status = await getDeliveryStatus(req.params.deliveryId);
-  if (status != "pending"){
-    res.send(consts.ERROR)
-    return
+  if(req.body.status == "on the way"){
+    var status = await getDeliveryStatus(req.params.deliveryId);
+    if (status != "pending"){
+      res.send(consts.ERROR)
+      return
+    }
   }
   var object_deliveryId = new ObjectId(req.params.deliveryId);
   var query_find = { _id: object_deliveryId}
