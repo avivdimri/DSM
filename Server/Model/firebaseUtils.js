@@ -1,11 +1,11 @@
 var admin = require("firebase-admin");
-
+const consts = require('../consts');
 var serviceAccount = require("../../deliverysystemmanagement-firebase-adminsdk-2cwyr-be192dd27d.json");
 
 exports.connectFirebase = function() {
     admin.initializeApp({
         credential: admin.credential.cert(serviceAccount),
-        databaseURL: "https://deliverysystemmanagement-default-rtdb.firebaseio.com"
+        databaseURL:consts.FIREBASE_DB_URL
       });
     
 
@@ -24,7 +24,6 @@ exports.getCouirerLocation = async function(id){
         latLng = latLng.l
     console.log("the lat long is " + latLng)
     return latLng
-    //return index.val();
 }
 
 

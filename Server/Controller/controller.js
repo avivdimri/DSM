@@ -3,7 +3,6 @@ module.exports = function(app) {
     const login = require('../Model/login/login')
     const register = require('../Model/login/register')
 
-    const parser = require('../csv_parser/parser');
     app.route('/api/register')
         .post(register.register)
     app.route('/api/login')
@@ -36,9 +35,6 @@ module.exports = function(app) {
     app.route('/getAllDeliveries')
         .get(model.get_all_deliveries)
 
-    app.route('/')
-     .get(model.consolelog)
-    
     app.route('/courier_status/:userId')
      .put(model.update_courier_status)
      app.route('/delivery_status/:deliveryId')
