@@ -75,12 +75,12 @@ exports.add_delivery = async function(req, res) {
         var result = await db.addDocumentByCollection(order,consts.ORDERS)
         if (result.express){
           var courier_ststus = await dispatch_delivery(result)
-          if (courier_ststus != 'SUCCSESS') {
+          if (courier_ststus != consts.SUCCESS) {
             res.json( {status:'FAILURE',message:courier_ststus})
             return 
           }
         }
-        res.json( {status:'SUCCSESS',message:'the order added successfuly'})
+        res.json( {status:consts.SUCCESS,message:'the order added successfuly'})
       }catch(err){
         res.json( {status:consts.ERROR, message:'error1:' + err})
       }
@@ -91,7 +91,7 @@ exports.findCourier = async function(req, res) {
 exports.findCourierById = async function(req, res) {
   await db.getDocById(consts.COURIERS,JSON.parse(req.query.params)._id).then(response =>{
     if(response){
-      res.json({data:response,msg:"success"})
+      res.json({data:response,msg:consts.SUCCESS})
     }else{
       res.json({msg:"courier doesn't exist"})
     }
@@ -150,14 +150,14 @@ exports.update_company_info = async function(req, res) {
   var id = req.body.params.id
   var object_id = new ObjectId(id);
   query_find = { _id: object_id}
-  result = await db.updateDocument("Companies",query_find,req.body.params.update).then(user => {
+  result = await db.updateDocument(consts.COMAPNIES,query_find,req.body.params.update).then(user => {
     //after successfully 
     console.log(user)
-    res.json( {status:'SUCCESS',message:'profile inforamtion update succsessfully',user:user})
+    res.json( {status:consts.SUCCESS,message:'profile inforamtion update succsessfully',user:user})
   })
   .catch(err => {
     //if an error occured go ahead and display the error
-    res.json( {status:'ERROR', message:'error1:' + err})
+    res.json( {status:consts.ERROR, message:'error1:' + err})
   })
 }
 exports.update_courier_info = async function(req, res) {
@@ -231,7 +231,7 @@ async function dispatch_delivery(delivery) {
     var result = await db.updateDoc(consts.ORDERS,query_find,query_update)
     return "sorry, couldn't find courier for the delivery request"
   }
-  return "SUCCSESS"
+  return consts.SUCCESS
         
 }
 
