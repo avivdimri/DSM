@@ -110,10 +110,10 @@ exports.get_all_deliveries = async function(req, res) {
   var query_projection = { projection: { _id:0,company_id:1 }}
   var companyIds = await db.findOne(consts.COURIERS,query_find,query_projection)
   query_find = { company_id: { $in : companyIds["company_id"]}}
-  var result = await db.getDocs(consts.ORDERS,query_find)
-  //console.log("the deliveries sent : "+ JSON.stringify(result) )
+  var lookup_res = await db.lookup(consts.ORDERS,query_find,companyIds) 
+
   console.log("the deliveries sent successfuly")
-  res.send(JSON.stringify(result))
+  res.send(JSON.stringify(lookup_res))
 }
 
 exports.update_courier_status = async function(req, res) {
@@ -237,41 +237,9 @@ async function dispatch_delivery(delivery) {
   var result = await db.findOne(consts.ORDERS,query_find,query_projection)
   console.log("get delivery function: result: " + result.status)
   return result.status
-}
+} 
 
-/*async function findBestCouriers(delivery){
-    var bestCourier = []
-    var courierIndices = []
-    latLong = delivery.src
-    allCouriers = await db.getCouriersByFilters(delivery.company_id,delivery.Vehicle_type)
-    for(var i =0; i < allCouriers.length;i++){
-        var courier = allCouriers[i]
-        var index = await firebase.getIndexLocationByCourierId(courier._id)
-        if (index == null)
-            continue
-            courierIndices.push({"courier": courier ,"index" :index})
-    }
-    var find = false
-    for(var i =0; i<3;i++){
-        rings = geo.getRingFromSrc(latLong,i)
-        for(var j =0; j < courierIndices.length;j++){
-          //console.log("the courier is : " + JSON.stringify(courierIndices[j].courier))
-           var index = courierIndices[j].index
-           if (rings.includes(index)){
-               find = true
-               bestCourier.push(courierIndices[j].courier)
-               //console.log("find courier " + JSON.stringify(courierIndices[j].courier))
-           }
-       }
-        if(find){
-            break
-        }
 
-    }
-    console.log("finish findBestBourier function: " + JSON.stringify(bestCourier))
-    return bestCourier
-    
-};*/
 exports.add_courier_token = async function(req, res) {
     var id = req.params.userId
     var courier_token = req.body.token

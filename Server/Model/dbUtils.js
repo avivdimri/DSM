@@ -12,7 +12,39 @@ exports.getCouriersByFilters = async function(companyId,Vehicle_type){
     //console.log(JSON.stringify(result))
     return result
 }
-
+exports.lookup = async function(companyIds){
+    const pipeline = [
+        {
+            "$match":{
+                "company_id":{ $in : companyIds["company_id"]}
+            } 
+        },
+        {
+            $addFields:{
+                "company_object_id": {$toObjectId: "$company_id" }
+            }
+        },
+        {
+          $lookup : {
+            from: 'Companies',
+              let: { 'company_object_id': '$company_object_id' },
+              pipeline: [
+                { '$match': {
+                  '$expr': { '$eq': [ '$_id', '$$company_object_id' ] }
+                }},
+                { '$project': { 'company_name': 1, '_id': 0 } }
+              ],
+              as: "company_name"
+          }
+        },{
+            $unwind : {
+                path: '$company_name',
+            }
+        }
+      ]
+    const res = await get().db(consts.DATABASE).collection(consts.ORDERS).aggregate(pipeline).toArray();
+    return res
+}
 // the function add document to DB by collection name
 exports.addDocumentByCollection = async function createListing(document,collection_name){
     const result = await get().db(consts.DATABASE).collection(collection_name).insertOne(document);
