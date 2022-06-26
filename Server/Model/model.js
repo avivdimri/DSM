@@ -109,8 +109,8 @@ exports.get_all_deliveries = async function(req, res) {
   var query_find = { _id: ObjectId(id)}
   var query_projection = { projection: { _id:0,company_id:1 }}
   var companyIds = await db.findOne(consts.COURIERS,query_find,query_projection)
-  query_find = { company_id: { $in : companyIds["company_id"]}}
-  var lookup_res = await db.lookup(consts.ORDERS,query_find,companyIds) 
+  
+  var lookup_res = await db.lookup(companyIds) 
 
   console.log("the deliveries sent successfuly")
   res.send(JSON.stringify(lookup_res))
