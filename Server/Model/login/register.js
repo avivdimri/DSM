@@ -93,7 +93,7 @@ function registerCourier(user,res){
           let hash = crypto.pbkdf2Sync(userData.password, consts.SALT,  
             1000, 64, `sha512`).toString(`hex`);
             userData.password = hash
-            console.log(userData.Vehicle_type)
+           
             //if the username is unique go ahead and create userData after hashing password and salt
             db.updateDocument(consts.COURIERS,user,userData)
                 .then(user => {
