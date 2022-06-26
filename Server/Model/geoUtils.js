@@ -15,7 +15,7 @@ exports.findCouriersWithIndex = async function(delivery,alreadySent=[]){
     for(var i =0; i < allCouriers.length;i++){
         var courier = allCouriers[i]
         if (alreadySent.includes(courier._id.toString())){
-            console.log("11111111    already sent courier  " + courier._id);
+           // console.log("11111111    already sent courier  " + courier._id);
             continue;
         }
         var index = await firebase.getIndexLocationByCourierId(courier._id)

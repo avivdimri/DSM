@@ -13,7 +13,6 @@ exports.addCourier = async function(req, res) {
     const user_name=req.body.user_name
     const company_id = req.body.company_id;
     req.body.company_id = [company_id];
-    console.log(" the body is: " + JSON.stringify(req.body))
     db.findOne(consts.COURIERS,{
         //ensure username is unique, i.e the username is not already in the database
         user_name:user_name
@@ -111,7 +110,6 @@ exports.get_all_deliveries = async function(req, res) {
   var companyIds = await db.findOne(consts.COURIERS,query_find,query_projection)
   
   var lookup_res = await db.lookup(companyIds) 
-
   console.log("the deliveries sent successfuly")
   res.send(JSON.stringify(lookup_res))
 }
@@ -257,6 +255,11 @@ exports.get_order = async function(req, res){
   var object_id = new ObjectId(order_id)
   var query_find = {_id: object_id}
   var result = await db.findOne(consts.ORDERS,query_find);
+  object_id = new ObjectId(result.company_id);
+  query_find = { _id: object_id}
+  query_projection = { projection: { _id:0,company_name:1 }}
+  var company_name = await db.findOne(consts.COMAPNIES,query_find,query_projection)
+  result['company_name'] = company_name
   console.log("get order function :: the order is : " +JSON.stringify(result) )
   res.send(JSON.stringify(result))
 }
